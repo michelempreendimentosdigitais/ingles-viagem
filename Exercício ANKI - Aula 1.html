@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Revisão de Pronúncia — Aula 1: Comunicação Útil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#132244; --navy-deep:#0b1730; --navy-soft:#2b3d63;
+    --gold:#c9a227; --gold-soft:#e6c35c; --cream:#f6f1e4; --ink:#132244;
+    --green:#4f7a5c; --green-bg:#bfe3c4; --red:#c56b6b;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{margin:0;background:var(--navy-deep);
+    background-image:radial-gradient(circle at 20% 5%, rgba(201,162,39,0.10), transparent 45%),radial-gradient(circle at 80% 95%, rgba(201,162,39,0.07), transparent 45%);
+    font-family:'Inter',sans-serif;color:var(--cream);
+    display:flex;justify-content:center;min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);}
+  .app{width:100%;max-width:430px;display:flex;flex-direction:column;min-height:100vh;padding:16px 16px 24px;}
+  .topbar{text-align:center;padding:6px 0 14px;}
+  .eyebrow{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;margin:0;letter-spacing:-0.3px;}
+  .prog-wrap{margin:10px 0 18px;}
+  .prog-text{display:flex;justify-content:space-between;font-size:12px;color:#c7cee0;margin-bottom:6px;}
+  .prog-text b{color:var(--gold-soft);}
+  .prog-bar{height:10px;background:var(--navy);border:1px solid var(--gold);border-radius:20px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));width:0%;transition:width .35s ease;}
+
+  .stage{flex:1;display:flex;flex-direction:column;justify-content:center;}
+  .card{background:var(--cream);color:var(--ink);border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 12px 34px rgba(0,0,0,0.4);min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+  .card-en{font-family:'Poppins',sans-serif;font-weight:800;font-size:23px;line-height:1.3;}
+  .card-streak{display:flex;justify-content:center;gap:6px;margin-top:2px;}
+  .pip{width:9px;height:9px;border-radius:50%;background:#d8cba1;}
+  .pip.on{background:var(--green);}
+  .play-btn{margin:14px auto 0;display:flex;align-items:center;gap:6px;background:var(--navy);color:var(--gold-soft);border:none;border-radius:20px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;}
+  .play-btn.big-play{margin:6px auto 0;padding:16px 26px;font-size:15px;background:var(--gold);color:var(--navy-deep);border-radius:30px;}
+  .play-btn.playing{background:var(--gold);color:var(--navy-deep);}
+  .play-btn.big-play.playing{background:var(--navy);color:var(--gold-soft);}
+  .listen-hint{font-size:13px;color:#6b5b2a;margin-bottom:6px;}
+  .card-phon{font-size:13px;color:#6b5b2a;font-style:italic;}
+  .card-pt{font-size:17px;color:var(--navy-soft);border-top:1px dashed #cfc4a4;padding-top:12px;margin-top:6px;}
+  .hidden{display:none !important;}
+
+  .actions{margin-top:20px;}
+  .btn-reveal{width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:16px;padding:16px;font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+  .rate-row{display:flex;gap:10px;margin-top:20px;}
+  .rate-btn{flex:1;border:none;border-radius:16px;padding:16px 8px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;cursor:pointer;}
+  .rate-no{background:var(--red);}
+  .rate-yes{background:var(--green);}
+
+  .done-screen{text-align:center;padding:20px 4px;}
+  .done-emoji{font-size:52px;margin-bottom:6px;}
+  .done-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;color:var(--gold-soft);margin-bottom:8px;}
+  .done-sub{font-size:13.5px;color:#c7cee0;margin-bottom:20px;}
+  .done-stat{background:var(--navy);border:1.5px solid var(--gold);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .done-stat .num{font-family:'Poppins',sans-serif;font-weight:800;font-size:24px;color:var(--cream);}
+  .done-stat .lbl{font-size:11px;color:#a9b3cc;text-transform:uppercase;letter-spacing:1px;}
+  .history{margin-top:18px;border-top:1px dashed var(--navy-soft);padding-top:14px;text-align:left;}
+  .history-title{font-size:11px;color:var(--gold-soft);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .history-row{display:flex;justify-content:space-between;font-size:12.5px;color:#c7cee0;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .history-row b{color:var(--cream);}
+  .btn-restart{width:100%;margin-top:20px;background:var(--gold);color:var(--navy-deep);border:none;border-radius:16px;padding:16px;font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+  .confetti-layer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:50;}
+  .confetti-piece{position:absolute;width:7px;height:12px;top:-10px;opacity:0.95;animation:fall 1600ms ease-in forwards;}
+  @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(540deg);opacity:0;}}
+  footer{text-align:center;font-size:10.5px;color:#7c86a3;margin-top:18px;}
+</style>
+</head>
+<body>
+<div id="errBanner" style="display:none;background:#c56b6b;color:#fff;padding:14px;text-align:center;font-family:sans-serif;font-size:13px;position:fixed;top:0;left:0;right:0;z-index:999;"></div>
+<div class="app">
+  <div class="topbar">
+    <div class="eyebrow">Revisão de Pronúncia · Aula 1</div>
+    <h1>Ouça e Entenda</h1>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-text"><span>Dominadas</span><b id="progText">0 / 0</b></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="card" id="card">
+      <div class="listen-hint" id="listenHint">🎧 Toque para ouvir a frase</div>
+      <div class="card-en hidden" id="cardEn"></div>
+      <div class="card-streak" id="cardStreak"></div>
+      <button class="play-btn big-play" id="playBtn">🔊 OUVIR A FRASE</button>
+      <div class="card-phon hidden" id="cardPhon"></div>
+      <div class="card-pt hidden" id="cardPt"></div>
+    </div>
+    <div class="actions">
+      <button class="btn-reveal" id="revealBtn">👁️ Revelar frase e tradução</button>
+      <div class="rate-row hidden" id="rateRow">
+        <button class="rate-btn rate-no" id="rateNoBtn">❌ Não entendi</button>
+        <button class="rate-btn rate-yes" id="rateYesBtn">✅ Entendi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="done-screen hidden" id="doneScreen">
+    <div class="done-emoji" id="doneEmoji">🏆</div>
+    <div class="done-title">Treino de escuta concluído!</div>
+    <div class="done-sub">Você entendeu todas as frases só de ouvido.</div>
+    <div class="done-stat"><div class="num" id="doneAttempts">0</div><div class="lbl">tentativas usadas</div></div>
+    <div class="history" id="historyBox"></div>
+    <button class="btn-restart" id="restartBtn">🔄 Treinar de novo</button>
+  </div>
+
+  <footer>Toque no play, tente entender de ouvido, depois revele. 🎧</footer>
+</div>
+<div class="confetti-layer" id="confettiLayer"></div>
+
+<script>
+window.onerror = function(msg, src, line, col, err){
+  const b = document.getElementById('errBanner');
+  b.style.display = 'block';
+  b.textContent = '⚠️ Erro ao carregar: ' + msg + ' (linha ' + line + ')';
+  return false;
+};
+
+/* ---------- DECK: all phrases from Lesson 1 ---------- */
+const deckSource = [
+  {en:"Excuse me...", phon:"iksk-iúz mi...", pt:"Com licença... (chame a atenção)"},
+  {en:"I don't understand.", phon:"ái dôunt ânderstend", pt:"Eu não entendo."},
+  {en:"Sorry, can you repeat that?", phon:"sóri, kén iú ripít dét?", pt:"Desculpa, pode repetir?"},
+  {en:"Can you speak slower, please?", phon:"kén iú spík slôuer, plíz?", pt:"Pode falar mais devagar, por favor?"},
+  {en:"Sorry, my English is not so good.", phon:"sóri, mái ínglish iz nót sôu gud", pt:"Desculpa, meu inglês não é tão bom."},
+  {en:"Can you write it down, please?", phon:"kén iú ráit it dáun, plíz?", pt:"Pode escrever, por favor?"},
+  {en:"This one, please.", phon:"díss uán, plíz", pt:"Este aqui, por favor. (aponte!)"},
+  {en:"Passport", phon:"pésport", pt:"Passaporte"},
+  {en:"Boarding pass", phon:"bórdin pes", pt:"Cartão de embarque"},
+  {en:"Check-in", phon:"tchék-in", pt:"Check-in"},
+  {en:"Flight", phon:"fláit", pt:"Voo"},
+  {en:"Gate", phon:"guêit", pt:"Portão de embarque"},
+  {en:"Luggage / Bags", phon:"lágidj / begs", pt:"Malas"},
+  {en:"Carry-on bag", phon:"kéri-on beg", pt:"Bagagem de mão"},
+  {en:"Departure", phon:"dipártchur", pt:"Partida"},
+  {en:"Arrival", phon:"arráivâl", pt:"Chegada"},
+  {en:"Customs", phon:"kástâms", pt:"Alfândega"},
+  {en:"Connection", phon:"kânékshân", pt:"Conexão (de voo)"},
+  {en:"Terminal", phon:"términâl", pt:"Terminal"},
+  {en:"Son", phon:"sán", pt:"Filho"},
+  {en:"Wife", phon:"uáif", pt:"Esposa"},
+  {en:"Hi!", phon:"rái!", pt:"Oi!"},
+  {en:"Hello!", phon:"rêlôu!", pt:"Olá!"},
+  {en:"Hey!", phon:"rêi!", pt:"E aí! (informal)"},
+  {en:"Good morning!", phon:"gud mórnin!", pt:"Bom dia!"},
+  {en:"Good afternoon!", phon:"gud éfternún!", pt:"Boa tarde!"},
+  {en:"Good evening!", phon:"gud ívnin!", pt:"Boa noite! (ao chegar)"},
+  {en:"How are you doing?", phon:"rau ár iú dúin?", pt:"Como você está indo?"},
+  {en:"What's up?", phon:"uáts âp?", pt:"E aí, tudo bem? (informal)"},
+  {en:"My name is Michel.", phon:"mái néim iz Michel", pt:"Meu nome é Michel."},
+  {en:"What's your name?", phon:"uáts iôr néim?", pt:"Qual é o seu nome?"},
+  {en:"Nice to meet you.", phon:"náis tu mít iú", pt:"Prazer em conhecer você."},
+  {en:"This is my wife.", phon:"díss iz mái uáif", pt:"Esta é minha esposa."},
+  {en:"This is my son.", phon:"díss iz mái sán", pt:"Este é meu filho."},
+  {en:"These are my sons.", phon:"díz ár mái sáns", pt:"Estes são meus filhos."},
+  {en:"We are traveling as a family.", phon:"uí ár trévelin ez a fémili", pt:"Estamos viajando em família."},
+  {en:"This is our first trip to the US.", phon:"díss iz áuer férst trip tu dí iú-és", pt:"Esta é nossa primeira viagem aos EUA."},
+  {en:"I'm good, thanks. And you?", phon:"áim gud, thénks. end iú?", pt:"Estou bem, obrigado. E você?"},
+  {en:"Not bad!", phon:"nót béd!", pt:"Não estou mal!"},
+  {en:"Pretty good, thank you.", phon:"príti gud, thénk iú", pt:"Muito bem, obrigado."},
+  {en:"I'm great, thanks!", phon:"áim gréit, thénks!", pt:"Estou ótimo, obrigado!"},
+  {en:"Where are you from?", phon:"uér ár iú fróm?", pt:"De onde você é?"},
+  {en:"I'm from Brazil.", phon:"áim fróm brazíl", pt:"Eu sou do Brasil."},
+  {en:"Is this your first time here?", phon:"iz díss iôr férst táim rír?", pt:"Essa é sua primeira vez aqui?"},
+  {en:"Excuse me, where is the bathroom?", phon:"iksk-iúz mi, uér iz dá béthrum?", pt:"Com licença, onde fica o banheiro?"},
+  {en:"Where is the taxi stand?", phon:"uér iz dá téxi stend?", pt:"Onde fica o ponto de táxi?"},
+  {en:"How can I get to the hotel?", phon:"rau kén ái guét tu dá rôutél?", pt:"Como eu chego até o hotel?"},
+  {en:"Is it far from here?", phon:"iz it far fróm rír?", pt:"É longe daqui?"},
+  {en:"I'm staying at the Hilton Hotel.", phon:"áim stêiin ét dá rílton rôutél", pt:"Estou hospedado no Hotel Hilton."},
+  {en:"I'll be here for 10 days.", phon:"áil bi rír fôr ten dêis", pt:"Vou ficar aqui por 10 dias."},
+  {en:"I'm here on vacation with my family.", phon:"áim rír on veikêichân uít mái fémili", pt:"Estou aqui de férias com minha família."},
+  {en:"What time does boarding start?", phon:"uát táim dáz bórdin start?", pt:"Que horas começa o embarque?"},
+  {en:"Do I need to show my passport here?", phon:"du ái níd tu chôu mái pésport rír?", pt:"Preciso mostrar meu passaporte aqui?"},
+  {en:"Thank you so much!", phon:"thénk iú sôu mátch!", pt:"Muito obrigado(a)!"},
+  {en:"You're welcome.", phon:"iôr uélcâm", pt:"De nada."},
+  {en:"It was nice meeting you.", phon:"it uóz náis mítin iú", pt:"Foi um prazer te conhecer."},
+  {en:"Have a good day!", phon:"réve gud déi!", pt:"Tenha um bom dia!"},
+  {en:"See you later! / Bye!", phon:"sí iú léiter! / bái!", pt:"Até mais! / Tchau!"}
+];
+
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+let deck = [];       // active (not yet mastered) cards: {en,phon,pt,streak,id}
+let total = 0;
+let mastered = 0;
+let attempts = 0;
+let currentCard = null;
+let lastCardId = null;
+
+function initDeck(){
+  deck = shuffle(deckSource).map((c,i)=>({...c, streak:0, id:i}));
+  total = deck.length; mastered = 0; attempts = 0; lastCardId = null;
+  document.getElementById('doneScreen').classList.add('hidden');
+  document.getElementById('stage').classList.remove('hidden');
+  updateProgress();
+  nextCard();
+}
+
+function updateProgress(){
+  document.getElementById('progText').textContent = mastered + ' / ' + total;
+  document.getElementById('progFill').style.width = (total? (mastered/total*100) : 0) + '%';
+}
+
+function pickNext(){
+  const candidates = deck.filter(c=>c.id!==lastCardId);
+  const pool = candidates.length ? candidates : deck;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function nextCard(){
+  if(deck.length===0){ finishSession(); return; }
+  currentCard = pickNext();
+  lastCardId = currentCard.id;
+  document.getElementById('cardEn').textContent = currentCard.en;
+  document.getElementById('cardPhon').textContent = '"'+currentCard.phon+'"';
+  document.getElementById('cardPt').textContent = currentCard.pt;
+  document.getElementById('cardEn').classList.add('hidden');
+  document.getElementById('cardPhon').classList.add('hidden');
+  document.getElementById('cardPt').classList.add('hidden');
+  document.getElementById('listenHint').classList.remove('hidden');
+  document.getElementById('revealBtn').classList.remove('hidden');
+  document.getElementById('rateRow').classList.add('hidden');
+  renderStreak();
+}
+
+function renderStreak(){
+  const box = document.getElementById('cardStreak'); box.innerHTML = '';
+  for(let i=0;i<2;i++){
+    const p = document.createElement('div');
+    p.className = 'pip' + (i < currentCard.streak ? ' on' : '');
+    box.appendChild(p);
+  }
+}
+
+let cachedVoices = [];
+function refreshVoices(){ cachedVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }
+if('speechSynthesis' in window){ refreshVoices(); window.speechSynthesis.onvoiceschanged = refreshVoices; }
+function speak(text, btn){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.92;
+  const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v=>v.lang==='en-US') || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('en'));
+  if(enVoice) u.voice = enVoice;
+  if(btn) btn.classList.add('playing');
+  u.onend = ()=>{ if(btn) btn.classList.remove('playing'); };
+  u.onerror = ()=>{ if(btn) btn.classList.remove('playing'); };
+  window.speechSynthesis.speak(u);
+}
+document.getElementById('playBtn').onclick = ()=>speak(currentCard.en, document.getElementById('playBtn'));
+
+document.getElementById('revealBtn').onclick = ()=>{
+  document.getElementById('listenHint').classList.add('hidden');
+  document.getElementById('cardEn').classList.remove('hidden');
+  document.getElementById('cardPhon').classList.remove('hidden');
+  document.getElementById('cardPt').classList.remove('hidden');
+  document.getElementById('revealBtn').classList.add('hidden');
+  document.getElementById('rateRow').classList.remove('hidden');
+};
+
+document.getElementById('rateYesBtn').onclick = ()=>rate(true);
+document.getElementById('rateNoBtn').onclick = ()=>rate(false);
+
+function rate(knewIt){
+  attempts++;
+  const idx = deck.findIndex(c=>c.id===currentCard.id);
+  if(knewIt){
+    deck[idx].streak++;
+    if(deck[idx].streak >= 2){
+      deck.splice(idx,1);
+      mastered++;
+      playTone([523.25,659.25,783.99],'sine',0.1);
+    } else {
+      playTone([440,554],'sine',0.09);
+    }
+  } else {
+    deck[idx].streak = 0;
+    playTone([220,170],'square',0.13);
+  }
+  updateProgress();
+  nextCard();
+}
+
+/* ---------- SOUND ---------- */
+let audioCtx = null;
+function getAudioCtx(){ if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } return audioCtx; }
+function playTone(freqs, type, dur){
+  try{
+    const ctx = getAudioCtx();
+    freqs.forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type=type; o.frequency.value=f; o.connect(g); g.connect(ctx.destination);
+      const t0 = ctx.currentTime + i*dur;
+      g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.22,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+      o.start(t0); o.stop(t0+dur+0.02);
+    });
+  }catch(e){}
+}
+
+/* ---------- HISTORY (persists in this browser after the file is saved/opened locally) ---------- */
+const HKEY = 'inglesViagem_aula1_pronunciaHistory';
+let memHistory = [];
+function loadHist(){ try{ return JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch(e){ return memHistory; } }
+function saveHist(arr){ try{ localStorage.setItem(HKEY, JSON.stringify(arr)); }catch(e){ memHistory = arr; } }
+
+function finishSession(){
+  document.getElementById('stage').classList.add('hidden');
+  const hist = loadHist();
+  const session = { n: hist.length+1, attempts: attempts, cards: total, date: new Date().toLocaleDateString('pt-BR') };
+  hist.push(session); saveHist(hist);
+
+  const best = Math.min(...hist.map(h=>h.attempts));
+  document.getElementById('doneAttempts').textContent = attempts;
+  document.getElementById('doneEmoji').textContent = attempts <= best ? '🏆' : '🎉';
+  document.getElementById('doneSub') && null;
+
+  const rows = hist.slice(-6).reverse().map(h=>`<div class="history-row"><span>Sessão ${h.n} — ${h.date}</span><b>${h.attempts} tentativas</b></div>`).join('');
+  document.getElementById('historyBox').innerHTML = hist.length>1
+    ? `<div class="history-title">📈 Seu histórico (menos tentativas = melhor memória)</div>${rows}`
+    : '';
+
+  document.getElementById('doneScreen').classList.remove('hidden');
+  burstConfetti();
+}
+
+function burstConfetti(){
+  const layer = document.getElementById('confettiLayer');
+  const colors = ['#c9a227','#e6c35c','#f6f1e4','#4f7a5c'];
+  for(let i=0;i<40;i++){
+    const p = document.createElement('div'); p.className='confetti-piece';
+    p.style.left = (Math.random()*100)+'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = (Math.random()*0.6)+'s';
+    layer.appendChild(p);
+    setTimeout(()=>p.remove(), 2400);
+  }
+}
+
+document.getElementById('restartBtn').onclick = initDeck;
+initDeck();
+
+setTimeout(function(){
+  const en = document.getElementById('cardEn');
+  if(!en || !en.textContent.trim()){
+    const b = document.getElementById('errBanner');
+    b.style.display = 'block';
+    b.textContent = '⚠️ O conteúdo não carregou. Tente abrir este link em outro navegador (Chrome ou Safari).';
+  }
+}, 1200);
+</script>
+</body>
+</html>
