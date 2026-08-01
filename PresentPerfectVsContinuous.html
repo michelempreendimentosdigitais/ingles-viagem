@@ -207,9 +207,15 @@ const ruleContentPT = `
     <ul>
       <li><b>Ever</b> = "alguma vez" — só em <b>perguntas</b>. Ex: <i>Have you ever been to the USA?</i></li>
       <li><b>Never</b> = "nunca" — já é negativo sozinho, nunca use "not" junto. Ex: <i>I've never eaten sushi.</i></li>
-      <li><b>Already</b> = destaca surpresa, "antes do esperado" — em frases <b>afirmativas</b>. Ex: <i>I've already finished my homework!</i></li>
-      <li><b>Yet</b> = "ainda" (negativas) ou "já" (perguntas) — sempre no <b>final</b> da frase. Ex: <i>I haven't finished yet. / Have you finished yet?</i></li>
+      <li><b>Already</b> = destaca surpresa, "antes do esperado" — em frases <b>afirmativas</b>. Ex: <i>I've already finished my homework!</i> (Eu já terminei o dever de casa! — nossa, tão rápido?)</li>
+      <li><b>Yet</b> tem 2 usos, sempre no <b>final</b> da frase:
+        <ul>
+          <li>Negativa = "ainda" (algo que ainda não aconteceu). Ex: <i>I haven't finished my homework yet.</i> (Eu ainda não terminei o dever de casa.)</li>
+          <li>Pergunta = "já" — mas aqui <b>sem surpresa</b>, é só checar se algo esperado já aconteceu. Ex: <i>Have you finished your homework yet?</i> (Você já terminou o dever de casa?)</li>
+        </ul>
+      </li>
     </ul>
+    <p><b>Contraste importante:</b> "already" tem tom de surpresa ("nossa, já?!"). "Yet" na pergunta é neutro — você só espera uma resposta sobre algo que já era esperado, sem espanto.</p>
     <p><b>Estrutura da pergunta:</b></p>
     <div class="struct">Have/Has + sujeito + particípio + ...?<br><i>Ex: Have you finished? / Has she arrived?</i></div>
 
@@ -272,9 +278,15 @@ const ruleContentEN = `
     <ul>
       <li><b>Ever</b> = "at any time" — only in <b>questions</b>. Ex: <i>Have you ever been to the USA?</i></li>
       <li><b>Never</b> = "at no time" — already negative on its own, never add "not". Ex: <i>I've never eaten sushi.</i></li>
-      <li><b>Already</b> = highlights surprise, "sooner than expected" — in <b>affirmative</b> sentences. Ex: <i>I've already finished my homework!</i></li>
-      <li><b>Yet</b> = "still" (negatives) or "already" (questions) — always at the <b>end</b> of the sentence. Ex: <i>I haven't finished yet. / Have you finished yet?</i></li>
+      <li><b>Already</b> = highlights surprise, "sooner than expected" — in <b>affirmative</b> sentences. Ex: <i>I've already finished my homework!</i> (Eu já terminei o dever de casa! — wow, that fast?)</li>
+      <li><b>Yet</b> has 2 uses, always at the <b>end</b> of the sentence:
+        <ul>
+          <li>Negative = "still" (something hasn't happened so far). Ex: <i>I haven't finished my homework yet.</i> (Eu ainda não terminei o dever de casa.)</li>
+          <li>Question = "already" — but here <b>no surprise</b>, just checking if something expected already happened. Ex: <i>Have you finished your homework yet?</i> (Você já terminou o dever de casa?)</li>
+        </ul>
+      </li>
     </ul>
+    <p><b>Key contrast:</b> "already" carries a surprised tone ("wow, already?!"). "Yet" in a question is neutral — you're just expecting an update on something already anticipated, no shock involved.</p>
     <p><b>Question structure:</b></p>
     <div class="struct">Have/Has + subject + past participle + ...?<br><i>Ex: Have you finished? / Has she arrived?</i></div>
 
@@ -314,7 +326,8 @@ const R4 = "An action that started in the past and continues up to the present (
 const R5 = "Ever = at any point in your life. Used in questions (Have/Has ... ever ...?).";
 const R6 = "Never = at no time, ever. Already negative — never add 'not'.";
 const R7 = "Already = happened sooner than expected. Adds emphasis/surprise — different from a plain 'já'.";
-const R8 = "Yet = so far / until now. Used in negatives and questions, always at the end.";
+const R8N = "Yet = 'ainda' in negative sentences (hasn't happened so far).";
+const R8Q = "Yet = 'já' in questions — you expect it's done, no surprise (unlike already).";
 
 const data = [
  {pt:"Perdi minhas chaves.",trigger:"I can't find my keys.",en:"I've lost my keys.",tense:"pp",reason:R1},
@@ -336,11 +349,11 @@ const data = [
  {pt:"Estou indo à academia todo dia essa semana.",trigger:"My legs are sore every single morning this week.",en:"I've been going to the gym every day.",tense:"ppc",reason:R4},
  {pt:"Ele está reclamando do wifi o dia todo.",trigger:"He brings up the slow internet in every conversation today.",en:"He's been complaining about the wifi all day.",tense:"ppc",reason:R4},
  {pt:"Já lavei a louça.",trigger:"There are no dishes in the sink.",en:"I've done the dishes.",tense:"pp",reason:R1},
- {pt:"Eu ainda não terminei o dever de casa.",trigger:"Your mom asks if you're done, but you're still not finished.",en:"I haven't finished my homework yet.",tense:"pp",reason:R8},
+ {pt:"Eu ainda não terminei o dever de casa.",trigger:"Your mom asks if you're done, but you're still not finished.",en:"I haven't finished my homework yet.",tense:"pp",reason:R8N},
  {pt:"Ela conseguiu uma promoção.",trigger:"She has a new job title now, and a whole team reporting to her.",en:"She's gotten a promotion.",tense:"pp",reason:R2},
  {pt:"Está chovendo o dia inteiro.",trigger:"The streets are all wet, and dark clouds are still overhead.",en:"It's been raining all day.",tense:"ppc",reason:R4},
  {pt:"Moro nessa cidade há 5 anos.",trigger:"I know every shortcut and every good restaurant in town.",en:"I've lived in this city for 5 years.",tense:"pp",reason:R3},
- {pt:"Você já terminou o dever de casa? (pergunta)",trigger:"You want to check if your friend is done with their homework by now.",en:"Have you finished your homework yet?",tense:"pp",reason:R8},
+ {pt:"Você já terminou o dever de casa? (pergunta)",trigger:"You want to check if your friend is done with their homework by now.",en:"Have you finished your homework yet?",tense:"pp",reason:R8Q},
  {pt:"Estou arrumando a mala desde de manhã.",trigger:"My suitcase is already half full, but I'm not done packing yet.",en:"I've been packing since this morning.",tense:"ppc",reason:R4}
 ];
 
