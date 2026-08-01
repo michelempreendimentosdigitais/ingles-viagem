@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Present Perfect na Prática</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#132244;--navy-deep:#0b1730;--gold:#c9a227;--gold-soft:#e6c35c;--cream:#f6f1e4;--ink:#132244;--green:#4f7a5c;--red:#c56b6b;--blue:#3f6ea5;--orange:#c8823a;}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0;background:var(--navy-deep);background-image:radial-gradient(circle at 20% 5%,rgba(201,162,39,.10),transparent 45%),radial-gradient(circle at 80% 95%,rgba(201,162,39,.07),transparent 45%);font-family:'Inter',sans-serif;color:var(--cream);display:flex;justify-content:center;min-height:100vh;}
+.app{width:100%;max-width:430px;display:flex;flex-direction:column;min-height:100vh;padding:16px 16px 24px;}
+.topbar{text-align:center;padding:6px 0 10px;}
+.eyebrow{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;margin:0;}
+.rule-btn{display:inline-block;margin-top:10px;background:var(--navy);border:1px solid var(--gold);color:var(--gold-soft);border-radius:14px;font-size:11px;padding:6px 10px;cursor:pointer;font-weight:700;}
+.phase-pill{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;background:var(--navy);border:1px solid var(--gold-soft);color:var(--gold-soft);padding:4px 12px;border-radius:14px;}
+.prog-wrap{margin:12px 0 16px;}
+.prog-text{display:flex;justify-content:space-between;font-size:12px;color:#c7cee0;margin-bottom:6px;}
+.prog-text b{color:var(--gold-soft);}
+.prog-bar{height:10px;background:var(--navy);border:1px solid var(--gold);border-radius:20px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));width:0%;transition:width .35s;}
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;}
+.card{background:var(--cream);color:var(--ink);border-radius:20px;padding:26px 22px;text-align:center;box-shadow:0 12px 34px rgba(0,0,0,.4);min-height:190px;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+.card-front{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;line-height:1.35;}
+.card-front.italic{font-style:italic;font-weight:700;}
+.card-en{font-weight:700;font-size:18px;color:var(--blue);line-height:1.35;}
+.card-tag{display:inline-block;margin:2px auto 0;font-size:10.5px;font-weight:700;letter-spacing:.4px;padding:4px 10px;border-radius:12px;}
+.tag-pp{background:#e8ddb8;color:#7a5b00;} .tag-ppc{background:#d7e6d9;color:#2c5c34;}
+.reason{font-size:12px;color:#3a4763;margin-top:2px;}
+.srs-info{font-size:11px;color:#5a678c;margin-top:6px;}
+.play-btn{margin:10px auto 0;display:flex;align-items:center;gap:6px;background:var(--navy);color:var(--gold-soft);border:none;border-radius:20px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;}
+.play-btn.playing{background:var(--gold);color:var(--navy-deep);}
+.hint{font-size:13px;color:#c7cee0;text-align:center;margin-top:14px;}
+.btn-reveal{background:var(--gold);color:var(--navy-deep);width:100%;margin-top:14px;padding:14px;border-radius:14px;border:none;font-weight:700;font-size:15px;cursor:pointer;}
+.rate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:16px;}
+.rate-btn{border:none;border-radius:12px;padding:10px 4px;color:#fff;cursor:pointer;font-weight:700;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.rate-btn span.iv{font-size:10px;font-weight:600;opacity:.85;}
+.rate-again{background:var(--red);}
+.rate-hard{background:var(--orange);}
+.rate-good{background:var(--green);}
+.rate-easy{background:var(--blue);}
+.hidden{display:none !important;}
+.done{background:var(--cream);color:var(--ink);border-radius:20px;padding:30px 22px;text-align:center;}
+.done h2{font-family:'Poppins',sans-serif;font-size:21px;margin:0 0 8px;}
+.done p{margin:4px 0;color:#3a4763;font-size:14px;}
+.restart-btn{margin-top:16px;background:var(--navy);color:var(--gold-soft);border:none;border-radius:20px;padding:12px 22px;font-weight:700;cursor:pointer;}
+.unlock-btn{margin-top:18px;background:linear-gradient(90deg,var(--gold),var(--gold-soft));color:var(--navy-deep);border:none;border-radius:20px;padding:14px 26px;font-weight:800;cursor:pointer;font-size:15px;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px;z-index:50;}
+.modal-box{background:var(--cream);color:var(--ink);border-radius:16px;padding:22px;max-width:380px;max-height:82vh;overflow-y:auto;font-size:13.5px;line-height:1.5;}
+.modal-box h3{font-family:'Poppins',sans-serif;margin:0 0 10px;font-size:16px;}
+.modal-box h4{font-family:'Poppins',sans-serif;margin:16px 0 6px;font-size:14px;color:var(--navy);}
+.modal-box .struct{background:#efe6cc;border-radius:10px;padding:8px 10px;font-size:12.5px;margin:6px 0;}
+.modal-box ol,.modal-box ul{margin:4px 0 8px;padding-left:20px;}
+.modal-box li{margin-bottom:5px;}
+.modal-box .divider{border:none;border-top:1px solid #d8cba1;margin:14px 0;}
+.modal-close{margin-top:14px;width:100%;background:var(--navy);color:var(--gold-soft);border:none;border-radius:12px;padding:10px;font-weight:700;cursor:pointer;}
+.sales{background:var(--cream);color:var(--ink);border-radius:22px;padding:26px 22px;box-shadow:0 12px 34px rgba(0,0,0,.4);}
+.sales .kicker{color:var(--green);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;text-align:center;}
+.sales h2{font-family:'Poppins',sans-serif;font-size:23px;text-align:center;margin:8px 0 14px;line-height:1.25;}
+.sales p{font-size:14.5px;line-height:1.55;margin:0 0 12px;}
+.sales ul{margin:0 0 16px;padding-left:0;list-style:none;}
+.sales li{font-size:14px;line-height:1.5;margin-bottom:10px;padding-left:26px;position:relative;}
+.sales li:before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:800;}
+.price-box{background:var(--navy);color:var(--cream);border-radius:16px;padding:18px;text-align:center;margin:14px 0;}
+.price-old{text-decoration:line-through;color:#9aa6c4;font-size:14px;}
+.price-new{font-family:'Poppins',sans-serif;font-size:30px;font-weight:800;color:var(--gold-soft);}
+.price-sub{font-size:12px;color:#c7cee0;margin-top:2px;}
+.cta-btn{display:block;width:100%;text-align:center;text-decoration:none;background:linear-gradient(90deg,var(--gold),var(--gold-soft));color:var(--navy-deep);font-weight:800;font-size:16px;padding:16px;border-radius:16px;margin-top:6px;}
+.guarantee{font-size:12px;text-align:center;color:#3a4763;margin-top:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="eyebrow">Prática pessoal</div>
+    <h1 id="mainTitle">Present Perfect × Continuous</h1>
+    <button class="rule-btn" id="ruleBtn">📖 Regra</button>
+    <div class="phase-pill" id="phasePill">PARTE 1 · Internalizar</div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-text"><span>Hoje: <b id="progText">0 / 0</b></span><span id="masteredText"></span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="card">
+      <div class="card-front" id="cardFront"></div>
+      <div class="card-en hidden" id="cardEn"></div>
+      <div class="card-tag hidden" id="cardTag"></div>
+      <div class="reason hidden" id="cardReason"></div>
+      <div class="srs-info" id="srsInfo"></div>
+      <button class="play-btn hidden" id="playBtn">🔊 Ouvir</button>
+    </div>
+    <div class="hint" id="hintText">Pense em como ficaria em inglês. Depois toque em "Ver resposta".</div>
+    <button class="btn-reveal" id="revealBtn">Ver resposta</button>
+    <div class="rate-grid hidden" id="rateGrid">
+      <button class="rate-btn rate-again" id="btnAgain">Errei<span class="iv" id="ivAgain"></span></button>
+      <button class="rate-btn rate-hard" id="btnHard">Difícil<span class="iv" id="ivHard"></span></button>
+      <button class="rate-btn rate-good" id="btnGood">Bom<span class="iv" id="ivGood"></span></button>
+      <button class="rate-btn rate-easy" id="btnEasy">Fácil<span class="iv" id="ivEasy"></span></button>
+    </div>
+  </div>
+
+  <div class="stage hidden" id="doneScreen">
+    <div class="done">
+      <div style="font-size:40px;">🎉</div>
+      <h2 id="doneTitle">Sessão concluída!</h2>
+      <p id="doneSub"></p>
+      <p id="nextDueText"></p>
+      <button class="restart-btn" id="restartBtn">Revisar de novo agora</button>
+    </div>
+  </div>
+
+  <div class="stage hidden" id="congratsScreen">
+    <div class="done">
+      <div style="font-size:40px;">🏆</div>
+      <h2>Você compreendeu o Present Perfect!</h2>
+      <p>Você já entende <b>quando e por que</b> usar o Present Perfect e o Present Perfect Continuous.</p>
+      <p>Agora é hora da parte que realmente muda sua fala: <b>usar</b> essas estruturas na prática, sem pensar na regra.</p>
+      <button class="unlock-btn" id="unlockBtn">Começar Parte 2 →</button>
+    </div>
+  </div>
+
+  <div class="stage hidden" id="salesScreen">
+    <div class="sales">
+      <div class="kicker">Parabéns, você chegou até aqui 🎉</div>
+      <h2>Agora você usa o Present Perfect com naturalidade.</h2>
+      <p>Sem decorar regra. Sem depender da memória pra lembrar estrutura. Só repetição inteligente, do jeito que realmente gruda.</p>
+      <p><b>E se cada ponto de gramática que trava seu inglês pudesse ser resolvido assim, em poucos minutos por dia?</b></p>
+      <ul>
+        <li>Flashcards novos toda semana, com o mesmo algoritmo de repetição espaçada que você acabou de sentir na pele.</li>
+        <li>+100 palavras e expressões reais por mês — as que fluente usa, não as de livro didático.</li>
+        <li>Menos de 10 minutos por dia. Sem enrolação, sem aula, sem decoreba.</li>
+        <li>Feito sob medida pra reforçar exatamente o que trava o seu inglês no curso.</li>
+      </ul>
+      <div class="price-box">
+        <div class="price-old">De R$97/mês</div>
+        <div class="price-new">R$47<span style="font-size:16px;">/mês</span></div>
+        <div class="price-sub">Preço fundador — vagas limitadas, atendimento é feito por mim pessoalmente</div>
+      </div>
+      <a class="cta-btn" href="https://wa.me/message/G4LNWJTKG6WZG1" target="_blank" rel="noopener" id="ctaBtn">Michel, quero minha assinatura agora →</a>
+      <div class="guarantee">Cancele quando quiser. Sem contrato de fidelidade.</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal hidden" id="teaserModal">
+  <div class="modal-box" style="text-align:center;">
+    <div style="font-size:34px;">💛</div>
+    <h3 style="text-align:center;">Você está indo muito bem!</h3>
+    <p>Isso aqui é só uma prova do que preparei pra você. Termine essa parte que, no final, tem uma surpresa especial esperando.</p>
+    <button class="modal-close" id="teaserContinueBtn">Quero continuar →</button>
+  </div>
+</div>
+
+<div class="modal hidden" id="ruleModal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 style="margin:0;">Regra rápida</h3>
+      <button id="langToggleBtn" style="background:var(--navy);color:var(--gold-soft);border:1px solid var(--gold);border-radius:12px;font-size:11px;font-weight:700;padding:5px 10px;cursor:pointer;">🌐 EN</button>
+    </div>
+    <div id="ruleContent"></div>
+    <button class="modal-close" id="modalCloseBtn">Entendi / Got it</button>
+  </div>
+</div>
+
+<script>
+const ruleContentPT = `
+    <h4>🟡 Present Perfect</h4>
+    <p><b>Usamos para:</b></p>
+    <ol>
+      <li>Uma ação do passado que <b>ainda importa agora</b>. Ex: <i>I've lost my keys</i> (Eu perdi minhas chaves). Como eu não as tenho agora, isso está impactando meu presente. Por isso eu devo usar o Present Perfect (<i>I've lost</i>) e não o Simple Past (<i>I lost</i>).</li>
+      <li>Uma ação que aconteceu, mas <b>não importa quando</b> exatamente. Ex: <i>I've been to New York.</i></li>
+      <li>Uma ação que começou no passado e <b>continua até hoje</b>. Você até pode dizer por quanto tempo, mas conta isso como <b>fato neutro, sem ênfase</b>. Ex: <i>I've lived in this city for 5 years.</i></li>
+    </ol>
+    <p><b>Estrutura:</b></p>
+    <div class="struct">
+      <b>Afirmativa:</b> Sujeito + have/has + particípio<br>
+      <i>I have lost my keys. / She has lost her keys.</i><br><br>
+      <b>Negativa:</b> Sujeito + have/has + <b>not</b> + particípio<br>
+      <i>I haven't lost my keys. / She hasn't lost her keys.</i><br><br>
+      <b>Interrogativa:</b> Have/Has + sujeito + particípio + ...?<br>
+      <i>Have you lost your keys? / Has she lost her keys?</i><br><br>
+      I / You / We / They → <b>have</b> · He / She / It → <b>has</b>
+    </div>
+
+    <h4>🟢 Present Perfect Continuous</h4>
+    <p><b>Usamos para:</b> uma ação que começou no passado e continua até agora — assim como a explicação 3 do Present Perfect. Porém, ao usar o Present Perfect Continuous, você está <b>dando destaque à ação, ao processo</b> em si.</p>
+    <p>Ex: <i>I have been painting this room for 5 hours.</i> Se você fala isso, a pessoa vai entender que você provavelmente está cansada — porque o Present Perfect Continuous enfatiza a ação, o esforço, o processo acontecendo.</p>
+    <p>Como você quer transmitir sua ideia? Usar o Present Perfect ou o Perfect Continuous pra falar de continuidade é <b>você quem escolhe</b>, dependendo se quer só informar o fato ou destacar o processo.</p>
+    <div class="struct">Sujeito + have/has + <b>been</b> + verbo + <b>-ing</b><br><i>Ex: I have been learning guitar for six months.</i></div>
+
+    <hr class="divider">
+    <h4>🤔 "Já" ou "Already"? Entenda de vez</h4>
+    <p>Normalmente a gente traduz "já" por "already". Mas usamos "already" quando queremos dar <b>ênfase</b> — quando algo foi feito antes do esperado, tipo uma pequena surpresa. Ex: <i>"You don't need to do the dishes. I've already done them."</i> (Você não precisa lavar a louça. Eu já lavei.) Aqui o "already" reforça: "olha, eu já fiz isso, nem precisava pedir!"</p>
+    <p>Mas repara: quando você <b>não</b> usa "already", a frase no Present Perfect já vem com um "já" natural, escondido nela. Por quê? Lembra que também usamos o Present Perfect quando o momento em que a ação aconteceu <b>não é mencionado</b> — e é exatamente esse "já" que impede o momento de aparecer na frase.</p>
+    <p>Exemplo: <i>"Eu já viajei pra Bahia."</i> Você não diz "eu já viajei pra Bahia ontem" — soa estranho, né? Percebe? Então como você fala isso em inglês? <i>I've traveled to Bahia.</i> Esse "já" avisa que a ação aconteceu, mas o momento exato não importa e nem cabe na frase.</p>
+    <p>Adivinha só: essa é <b>exatamente</b> a regra do Present Perfect! Ele também não aceita um momento específico junto (não dá pra falar "I have visited Bahia yesterday"). Por isso, quando você usa o Present Perfect, você já está "dizendo" esse "já" escondido dentro da própria estrutura — não precisa repetir com "already".</p>
+    <p><b>Resumindo:</b> se você quer falar de algo no passado <b>e mencionar quando</b> aconteceu, use o Simple Past. Ex: <i>I traveled to Bahia last year.</i> Se o "quando aconteceu" <b>não é mencionado</b>, é irrelevante na frase, use o Present Perfect. Ex: <i>I've traveled to Bahia.</i></p>
+    <p>🐱 <b>Pulo do gato:</b> é muito comum os nativos começarem a falar de algo no passado usando o Present Perfect, sem mencionar quando — e logo depois complementarem tudo em Simple Past. Ex: <i>I've traveled to Bahia. I went to Salvador and we ate a lot of acarajé. We stayed at a fancy hotel.</i> Percebeu? Introduziu o assunto no Present Perfect (sem dizer quando) e depois tudo que veio ligado ao que foi dito ficou no Simple Past. Imagina ficar repetindo Present Perfect a frase inteira? Ninguém merece! 😄</p>
+
+    <hr class="divider">
+    <h4>🔑 Ever, Never, Already, Yet — quando usar cada um</h4>
+    <ul>
+      <li><b>Ever</b> = "alguma vez" — só em <b>perguntas</b>. Ex: <i>Have you ever been to the USA?</i></li>
+      <li><b>Never</b> = "nunca" — já é negativo sozinho, nunca use "not" junto. Ex: <i>I've never eaten sushi.</i></li>
+      <li><b>Already</b> = destaca surpresa, "antes do esperado" — em frases <b>afirmativas</b>. Ex: <i>I've already finished my homework!</i></li>
+      <li><b>Yet</b> = "ainda" (negativas) ou "já" (perguntas) — sempre no <b>final</b> da frase. Ex: <i>I haven't finished yet. / Have you finished yet?</i></li>
+    </ul>
+    <p><b>Estrutura da pergunta:</b></p>
+    <div class="struct">Have/Has + sujeito + particípio + ...?<br><i>Ex: Have you finished? / Has she arrived?</i></div>
+
+    <hr class="divider">
+    <h4>🧠 Como usar esse app (passo a passo)</h4>
+    <ol>
+      <li>Uma frase aparece na tela. Pense em como seria a resposta antes de olhar.</li>
+      <li>Toque em <b>"Ver resposta"</b> pra conferir se você acertou.</li>
+      <li>Toque no botão que mais combina com o que aconteceu:</li>
+    </ol>
+    <ul>
+      <li>❌ <b>Errei</b> → a frase volta daqui a pouco, ainda hoje.</li>
+      <li>🟠 <b>Difícil</b> → você acertou, mas suou pra lembrar → ela volta em poucos dias.</li>
+      <li>🟢 <b>Bom</b> → você acertou tranquilo → ela some por mais tempo.</li>
+      <li>🔵 <b>Fácil</b> → nem precisou pensar → ela some por muito mais tempo ainda.</li>
+    </ul>
+    <p>O app vai anotando tudo isso sozinho. Com o tempo, ele aprende exatamente quando <b>você</b> está prestes a esquecer cada frase — e é só nessa hora que ela reaparece. Por isso não precisa estudar todo dia: o app te avisa quando for a hora certa.</p>
+    <p><b>Se você fechar o app no meio, não perde nada.</b> Seu progresso fica salvo automaticamente nesse navegador. Ao voltar, continua de onde parou.</p>
+
+    <hr class="divider">
+    <p style="text-align:center;"><b>Praticando só 10 minutinhos por dia</b>, em poucas semanas você vai falar Present Perfect sem precisar traduzir na cabeça, sem travar pensando na regra, e sem aquele medo de errar na hora de abrir a boca. 🚀</p>
+`;
+
+const ruleContentEN = `
+    <h4>🟡 Present Perfect</h4>
+    <p><b>We use it for:</b></p>
+    <ol>
+      <li>A past action that's <b>still relevant now</b>. Ex: <i>I've lost my keys.</i> Since I don't have them now, it's affecting my present. That's why I should use the Present Perfect (<i>I've lost</i>) and not the Simple Past (<i>I lost</i>).</li>
+      <li>An action that happened, but <b>when it happened doesn't matter</b>. Ex: <i>I've been to New York.</i></li>
+      <li>An action that started in the past and <b>continues today</b>. You can even say how long, but you're stating it as a <b>neutral fact, without emphasis</b>. Ex: <i>I've lived in this city for 5 years.</i></li>
+    </ol>
+    <p><b>Structure:</b></p>
+    <div class="struct">
+      <b>Affirmative:</b> Subject + have/has + participle<br>
+      <i>I have lost my keys. / She has lost her keys.</i><br><br>
+      <b>Negative:</b> Subject + have/has + <b>not</b> + participle<br>
+      <i>I haven't lost my keys. / She hasn't lost her keys.</i><br><br>
+      <b>Interrogative:</b> Have/Has + subject + participle + ...?<br>
+      <i>Have you lost your keys? / Has she lost her keys?</i><br><br>
+      I / You / We / They → <b>have</b> · He / She / It → <b>has</b>
+    </div>
+
+    <h4>🟢 Present Perfect Continuous</h4>
+    <p><b>We use it for:</b> an action that started in the past and continues now — same idea as rule 3 above. But with the Present Perfect Continuous, you're putting the <b>focus on the action, on the process</b> itself.</p>
+    <p>Ex: <i>I have been painting this room for 5 hours.</i> If you say this, the listener understands you're probably tired — because the Present Perfect Continuous emphasizes the effort, the process happening.</p>
+    <p>How do you want to express your idea? Using Present Perfect or Perfect Continuous to talk about continuity is <b>your choice</b>, depending on whether you just want to state the fact or highlight the process.</p>
+    <div class="struct">Subject + have/has + <b>been</b> + verb + <b>-ing</b><br><i>Ex: I have been learning guitar for six months.</i></div>
+
+    <hr class="divider">
+    <h4>🤔 "Já" (Portuguese) vs "Already"? Let's clear this up</h4>
+    <p>We usually translate "já" as "already." But we use "already" for <b>emphasis</b> — when something happened sooner than expected, like a little surprise. Ex: <i>"You don't need to do the dishes. I've already done them."</i> Here "already" reinforces: "look, I already did it, you didn't even have to ask!"</p>
+    <p>But notice: when you <b>don't</b> use "already," a Present Perfect sentence already carries a natural "já" feeling on its own. Why? Remember we also use the Present Perfect when the exact time an action happened <b>isn't mentioned</b> — and that's exactly what this hidden "já" does: it blocks the time from showing up in the sentence.</p>
+    <p>Example: in Portuguese, <i>"Eu já viajei pra Bahia"</i> ("I've traveled to Bahia"). You can't say "eu já viajei pra Bahia ontem" ("I already traveled to Bahia yesterday") — sounds off, right? Notice that? So how do you say it in English? <i>I've traveled to Bahia.</i> That "já" signals the action happened, but exactly when doesn't matter and doesn't fit in the sentence.</p>
+    <p>Guess what — that's <b>exactly</b> the Present Perfect rule! It also doesn't accept a specific time attached (you can't say "I have visited Bahia yesterday"). So when you use the Present Perfect, you're already "saying" that hidden "já" inside the structure itself — no need to repeat it with "already".</p>
+    <p><b>Bottom line:</b> if you want to talk about something in the past <b>and mention when</b> it happened, use the Simple Past. Ex: <i>I traveled to Bahia last year.</i> If "when it happened" <b>isn't mentioned</b>, it's irrelevant to the sentence, use the Present Perfect. Ex: <i>I've traveled to Bahia.</i></p>
+    <p>🐱 <b>Native-speaker trick:</b> natives very often kick off a past story with the Present Perfect, without saying when — and then finish the whole thing in Simple Past. Ex: <i>I've traveled to Bahia. I went to Salvador and we ate a lot of acarajé. We stayed at a fancy hotel.</i> See that? They opened with the Present Perfect (no "when"), then everything connected to it switched to Simple Past. Imagine repeating the Present Perfect the whole story long? Nobody's got time for that! 😄</p>
+
+    <hr class="divider">
+    <h4>🔑 Ever, Never, Already, Yet — when to use each</h4>
+    <ul>
+      <li><b>Ever</b> = "at any time" — only in <b>questions</b>. Ex: <i>Have you ever been to the USA?</i></li>
+      <li><b>Never</b> = "at no time" — already negative on its own, never add "not". Ex: <i>I've never eaten sushi.</i></li>
+      <li><b>Already</b> = highlights surprise, "sooner than expected" — in <b>affirmative</b> sentences. Ex: <i>I've already finished my homework!</i></li>
+      <li><b>Yet</b> = "still" (negatives) or "already" (questions) — always at the <b>end</b> of the sentence. Ex: <i>I haven't finished yet. / Have you finished yet?</i></li>
+    </ul>
+    <p><b>Question structure:</b></p>
+    <div class="struct">Have/Has + subject + past participle + ...?<br><i>Ex: Have you finished? / Has she arrived?</i></div>
+
+    <hr class="divider">
+    <h4>🧠 How to use this app (step by step)</h4>
+    <ol>
+      <li>A sentence appears on screen. Think about the answer before you look.</li>
+      <li>Tap <b>"See answer"</b> to check if you got it right.</li>
+      <li>Tap the button that matches what happened:</li>
+    </ol>
+    <ul>
+      <li>❌ <b>Again</b> → the sentence comes back soon, still today.</li>
+      <li>🟠 <b>Hard</b> → you got it, but it was tough → it comes back in a few days.</li>
+      <li>🟢 <b>Good</b> → you got it easily → it disappears for longer.</li>
+      <li>🔵 <b>Easy</b> → you didn't even have to think → it disappears for much longer.</li>
+    </ul>
+    <p>The app keeps track of all of this on its own. Over time, it learns exactly when <b>you're</b> about to forget each sentence — and that's the only time it shows up again. That's why you don't need to study every day: the app tells you when it's the right time.</p>
+    <p><b>If you close the app halfway through, you lose nothing.</b> Your progress is saved automatically in this browser. When you come back, you pick up right where you left off.</p>
+
+    <hr class="divider">
+    <p style="text-align:center;"><b>Just 10 minutes a day</b>, and in a few weeks you'll speak the Present Perfect without translating in your head, without freezing over the rule, and without that fear of making a mistake when you open your mouth. 🚀</p>
+`;
+
+let currentLang = 'pt';
+function renderRuleContent(){
+  document.getElementById('ruleContent').innerHTML = currentLang==='pt' ? ruleContentPT : ruleContentEN;
+  document.getElementById('langToggleBtn').textContent = currentLang==='pt' ? '🌐 EN' : '🌐 PT';
+}
+document.getElementById('langToggleBtn').onclick = ()=>{ currentLang = currentLang==='pt'?'en':'pt'; renderRuleContent(); };
+renderRuleContent();
+
+// ---------- DADOS ----------
+const R1 = "An action in the past that's relevant to / affects the present.";
+const R2 = "An action at an indefinite time in the past.";
+const R3 = "An action that started in the past and continues up to the present (no emphasis).";
+const R4 = "An action that started in the past and continues up to the present (more emphasis).";
+const R5 = "Ever = at any point in your life. Used in questions (Have/Has ... ever ...?).";
+const R6 = "Never = at no time, ever. Already negative — never add 'not'.";
+const R7 = "Already = happened sooner than expected. Adds emphasis/surprise — different from a plain 'já'.";
+const R8 = "Yet = so far / until now. Used in negatives and questions, always at the end.";
+
+const data = [
+ {pt:"Perdi minhas chaves.",trigger:"I can't find my keys.",en:"I've lost my keys.",tense:"pp",reason:R1},
+ {pt:"Estou malhando (por isso estou suado).",trigger:"I'm sweaty and out of breath.",en:"I've been exercising.",tense:"ppc",reason:R4},
+ {pt:"Estou ensinando minha calopsita a cantar.",trigger:"My cockatiel just whistled a little tune for the first time!",en:"I've been teaching my cockatiel how to sing.",tense:"ppc",reason:R4},
+ {pt:"Já reguei as plantas.",trigger:"There's no dry soil in the pots anymore.",en:"I've watered the plants.",tense:"pp",reason:R1},
+ {pt:"Estou rolando o feed do Instagram há um tempo.",trigger:"My thumb hurts from swiping my phone screen.",en:"I've been scrolling on Instagram.",tense:"ppc",reason:R4},
+ {pt:"Já assisti essa série.",trigger:"I already know how the show ends, don't spoil it!",en:"I've already watched that show.",tense:"pp",reason:R2},
+ {pt:"Estou aprendendo violão.",trigger:"My fingers are sore from pressing the strings.",en:"I've been learning guitar.",tense:"ppc",reason:R4},
+ {pt:"Estou economizando dinheiro pra viagem.",trigger:"I finally have enough money saved for my trip.",en:"I've been saving money for a trip.",tense:"ppc",reason:R4},
+ {pt:"Você já foi aos Estados Unidos? (pergunta sobre experiência)",trigger:"You want to know if your friend has this experience at any point in their life.",en:"Have you ever been to the United States?",tense:"pp",reason:R5},
+ {pt:"Já limpei a casa toda.",trigger:"The house is spotless, not a speck of dust anywhere.",en:"I've cleaned the house.",tense:"pp",reason:R1},
+ {pt:"Já lavei a roupa.",trigger:"There are no dirty clothes in the hamper anymore.",en:"I've done the laundry.",tense:"pp",reason:R1},
+ {pt:"Eu nunca comi sushi.",trigger:"You're being offered sushi for the very first time in your life.",en:"I've never eaten sushi.",tense:"pp",reason:R6},
+ {pt:"Conheço minha melhor amiga há 15 anos.",trigger:"My best friend and I still talk almost every day since school.",en:"I've known my best friend for 15 years.",tense:"pp",reason:R3},
+ {pt:"Eu já terminei o dever de casa! (antes do esperado)",trigger:"Your mom is surprised you finished your homework way earlier than she expected.",en:"I've already finished my homework!",tense:"pp",reason:R7},
+ {pt:"Pedi demissão do meu emprego.",trigger:"I don't have a boss to answer to anymore.",en:"I've quit my job.",tense:"pp",reason:R2},
+ {pt:"Me mudei pra um apartamento novo.",trigger:"My mailing address is different now.",en:"I've moved to a new apartment.",tense:"pp",reason:R2},
+ {pt:"Estou indo à academia todo dia essa semana.",trigger:"My legs are sore every single morning this week.",en:"I've been going to the gym every day.",tense:"ppc",reason:R4},
+ {pt:"Ele está reclamando do wifi o dia todo.",trigger:"He brings up the slow internet in every conversation today.",en:"He's been complaining about the wifi all day.",tense:"ppc",reason:R4},
+ {pt:"Já lavei a louça.",trigger:"There are no dishes in the sink.",en:"I've done the dishes.",tense:"pp",reason:R1},
+ {pt:"Eu ainda não terminei o dever de casa.",trigger:"Your mom asks if you're done, but you're still not finished.",en:"I haven't finished my homework yet.",tense:"pp",reason:R8},
+ {pt:"Ela conseguiu uma promoção.",trigger:"She has a new job title now, and a whole team reporting to her.",en:"She's gotten a promotion.",tense:"pp",reason:R2},
+ {pt:"Está chovendo o dia inteiro.",trigger:"The streets are all wet, and dark clouds are still overhead.",en:"It's been raining all day.",tense:"ppc",reason:R4},
+ {pt:"Moro nessa cidade há 5 anos.",trigger:"I know every shortcut and every good restaurant in town.",en:"I've lived in this city for 5 years.",tense:"pp",reason:R3},
+ {pt:"Você já terminou o dever de casa? (pergunta)",trigger:"You want to check if your friend is done with their homework by now.",en:"Have you finished your homework yet?",tense:"pp",reason:R8},
+ {pt:"Estou arrumando a mala desde de manhã.",trigger:"My suitcase is already half full, but I'm not done packing yet.",en:"I've been packing since this morning.",tense:"ppc",reason:R4}
+];
+
+// ---------- MOTOR SM-2 (algoritmo real do Anki) ----------
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function addDays(d,n){const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10);}
+function fmtInterval(days){ return days<1 ? 'agora' : days===1 ? '1d' : days<30 ? days+'d' : Math.round(days/30)+'m'; }
+function loadJSON(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v||fallback();}catch(e){return fallback();}}
+function saveJSON(key,v){try{localStorage.setItem(key,JSON.stringify(v));}catch(e){}}
+
+// cada card: {id, reps, ease (2.5 padrão SM-2), interval (dias), due}
+function freshState(){ return data.map((c,i)=>({id:i, reps:0, ease:2.5, interval:0, due:todayStr()})); }
+
+const KEY_A='ivpp_A_v2', KEY_B='ivpp_B_v2', KEY_FLAGS='ivpp_flags_v2';
+let flags = loadJSON(KEY_FLAGS, ()=>({completedA:false, completedB:false, teaserShown:false}));
+if(flags.teaserShown===undefined) flags.teaserShown=false;
+const TEASER_AT = Math.ceil(data.length/2); // dispara na metade da Parte 2
+let stateA = loadJSON(KEY_A, freshState);
+let stateB = loadJSON(KEY_B, freshState);
+
+let phase = flags.completedA ? 'B' : 'A';
+let queue=[], currentIdx=null, reviewedCount=0;
+
+function currentState(){ return phase==='A' ? stateA : stateB; }
+function saveCurrentState(){ saveJSON(phase==='A'?KEY_A:KEY_B, currentState()); }
+
+// calcula os 4 intervalos possíveis (Again/Hard/Good/Easy) para o card atual, sem alterar o estado
+function previewIntervals(card){
+  const hardInt = card.reps===0 ? 1 : Math.max(1, Math.round(card.interval * 1.2));
+  let goodInt;
+  if(card.reps===0) goodInt = 1;
+  else if(card.reps===1) goodInt = 6;
+  else goodInt = Math.max(1, Math.round(card.interval * card.ease));
+  const easyInt = Math.max(goodInt+1, Math.round(goodInt * card.ease * 1.3));
+  return {again:0, hard:hardInt, good:goodInt, easy:easyInt};
+}
+
+function buildQueue(){
+  const today=todayStr();
+  queue = currentState().filter(c=>c.due<=today).map(c=>c.id);
+  for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
+  reviewedCount=0;
+  document.getElementById('mainTitle').textContent = phase==='A' ? 'Present Perfect × Continuous' : 'Agora, use na prática';
+  document.getElementById('phasePill').textContent = phase==='A' ? 'PARTE 1 · Internalizar' : 'PARTE 2 · Usar';
+  document.getElementById('hintText').textContent = phase==='A'
+    ? 'Pense em como ficaria em inglês. Depois toque em "Ver resposta".'
+    : 'Reformule a frase usando Present Perfect ou Continuous. Depois toque em "Ver resposta".';
+  document.getElementById('stage').classList.remove('hidden');
+  document.getElementById('doneScreen').classList.add('hidden');
+  document.getElementById('congratsScreen').classList.add('hidden');
+  document.getElementById('salesScreen').classList.add('hidden');
+  updateProgress();
+  nextCard();
+}
+
+function updateProgress(){
+  const total=queue.length+reviewedCount;
+  document.getElementById('progText').textContent=reviewedCount+' / '+total;
+  document.getElementById('progFill').style.width=(total?(reviewedCount/total*100):0)+'%';
+  const masteredN = currentState().filter(c=>c.interval>=16).length;
+  document.getElementById('masteredText').textContent='⭐ '+masteredN+'/'+data.length+' dominados';
+}
+
+function nextCard(){
+  if(queue.length===0){ finishSession(); return; }
+  currentIdx=queue[0];
+  const c=data[currentIdx];
+  const st=currentState().find(x=>x.id===currentIdx);
+  const frontEl=document.getElementById('cardFront');
+  frontEl.textContent = phase==='A' ? c.pt : c.trigger;
+  frontEl.className = 'card-front'+(phase==='B'?' italic':'');
+  document.getElementById('cardEn').textContent=c.en;
+  document.getElementById('cardEn').classList.add('hidden');
+  document.getElementById('cardTag').classList.add('hidden');
+  document.getElementById('cardTag').textContent = c.tense==='pp'?'PRESENT PERFECT':'PRESENT PERFECT CONTINUOUS';
+  document.getElementById('cardTag').className='card-tag hidden '+(c.tense==='pp'?'tag-pp':'tag-ppc');
+  document.getElementById('cardReason').textContent=c.reason;
+  document.getElementById('cardReason').classList.add('hidden');
+  document.getElementById('srsInfo').textContent = st.reps===0 ? 'Card novo' : 'Visto '+st.reps+'x · último intervalo: '+fmtInterval(st.interval);
+  document.getElementById('playBtn').classList.add('hidden');
+  document.getElementById('hintText').classList.remove('hidden');
+  document.getElementById('revealBtn').classList.remove('hidden');
+  document.getElementById('rateGrid').classList.add('hidden');
+}
+
+let cachedVoices=[];
+function refreshVoices(){cachedVoices=window.speechSynthesis?window.speechSynthesis.getVoices():[];}
+if('speechSynthesis' in window){refreshVoices();window.speechSynthesis.onvoiceschanged=refreshVoices;}
+function speak(text,btn){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=0.92;
+  const voices=cachedVoices.length?cachedVoices:window.speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('en'));
+  if(v)u.voice=v;
+  if(btn)btn.classList.add('playing');
+  u.onend=()=>{if(btn)btn.classList.remove('playing');};
+  u.onerror=()=>{if(btn)btn.classList.remove('playing');};
+  window.speechSynthesis.speak(u);
+}
+document.getElementById('playBtn').onclick=()=>speak(data[currentIdx].en,document.getElementById('playBtn'));
+
+document.getElementById('revealBtn').onclick=()=>{
+  document.getElementById('hintText').classList.add('hidden');
+  document.getElementById('cardEn').classList.remove('hidden');
+  document.getElementById('cardTag').classList.remove('hidden');
+  document.getElementById('cardReason').classList.remove('hidden');
+  document.getElementById('playBtn').classList.remove('hidden');
+  document.getElementById('revealBtn').classList.add('hidden');
+
+  const st=currentState().find(x=>x.id===currentIdx);
+  const iv=previewIntervals(st);
+  document.getElementById('ivAgain').textContent = fmtInterval(iv.again);
+  document.getElementById('ivHard').textContent = fmtInterval(iv.hard);
+  document.getElementById('ivGood').textContent = fmtInterval(iv.good);
+  document.getElementById('ivEasy').textContent = fmtInterval(iv.easy);
+  document.getElementById('rateGrid').classList.remove('hidden');
+};
+
+document.getElementById('btnAgain').onclick=()=>rate('again');
+document.getElementById('btnHard').onclick=()=>rate('hard');
+document.getElementById('btnGood').onclick=()=>rate('good');
+document.getElementById('btnEasy').onclick=()=>rate('easy');
+
+function rate(grade){
+  const st=currentState().find(c=>c.id===currentIdx);
+  const iv=previewIntervals(st);
+  if(grade==='again'){
+    st.reps=0; st.ease=Math.max(1.3, st.ease-0.2); st.interval=0; st.due=todayStr();
+    queue.shift();
+    queue.splice(Math.min(3,queue.length),0,currentIdx); // reaparece daqui a alguns cards, não na hora
+    playTone([220,170],'square',0.13);
+  } else {
+    let newInterval, easeDelta;
+    if(grade==='hard'){ newInterval=iv.hard; easeDelta=-0.15; }
+    else if(grade==='good'){ newInterval=iv.good; easeDelta=0; }
+    else { newInterval=iv.easy; easeDelta=0.15; }
+    st.reps += 1;
+    st.ease = Math.max(1.3, st.ease + easeDelta);
+    st.interval = newInterval;
+    st.due = addDays(todayStr(), newInterval);
+    queue.shift();
+    reviewedCount++;
+    playTone(grade==='easy'?[523.25,659.25,783.99,1046.5]:[523.25,659.25],'sine',0.09);
+  }
+  saveCurrentState();
+  updateProgress();
+
+  if(phase==='B' && !flags.teaserShown && reviewedCount===TEASER_AT){
+    flags.teaserShown=true; saveJSON(KEY_FLAGS,flags);
+    document.getElementById('stage').classList.add('hidden');
+    document.getElementById('teaserModal').classList.remove('hidden');
+    return;
+  }
+  nextCard();
+}
+
+document.getElementById('teaserContinueBtn').onclick=()=>{
+  document.getElementById('teaserModal').classList.add('hidden');
+  document.getElementById('stage').classList.remove('hidden');
+  nextCard();
+};
+
+function finishSession(){
+  document.getElementById('stage').classList.add('hidden');
+  const allGraduated = currentState().every(c=>c.interval>=1);
+  if(phase==='A' && allGraduated && !flags.completedA){
+    flags.completedA=true; saveJSON(KEY_FLAGS,flags);
+    document.getElementById('congratsScreen').classList.remove('hidden');
+    return;
+  }
+  if(phase==='B' && allGraduated && !flags.completedB){
+    flags.completedB=true; saveJSON(KEY_FLAGS,flags);
+    document.getElementById('salesScreen').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('doneTitle').textContent='Sessão concluída!';
+  document.getElementById('doneSub').innerHTML='Você revisou <b>'+reviewedCount+'</b> cards hoje.';
+  const future=currentState().filter(c=>c.due>todayStr());
+  document.getElementById('nextDueText').textContent = future.length
+    ? 'Próxima revisão liberada em: '+new Date(future.map(c=>c.due).sort()[0]+'T00:00:00').toLocaleDateString('pt-BR')
+    : 'Todos os cards ainda estão nesta rodada.';
+  document.getElementById('doneScreen').classList.remove('hidden');
+}
+
+document.getElementById('restartBtn').onclick=()=>buildQueue();
+document.getElementById('unlockBtn').onclick=()=>{ phase='B'; buildQueue(); };
+document.getElementById('ruleBtn').onclick=()=>document.getElementById('ruleModal').classList.remove('hidden');
+document.getElementById('modalCloseBtn').onclick=()=>document.getElementById('ruleModal').classList.add('hidden');
+
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();}return audioCtx;}
+function playTone(freqs,type,dur){
+  try{const ctx=getAudioCtx();
+    freqs.forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type=type;o.frequency.value=f;o.connect(g);g.connect(ctx.destination);
+      const t0=ctx.currentTime+i*dur;
+      g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.22,t0+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+      o.start(t0);o.stop(t0+dur+0.02);
+    });
+  }catch(e){}
+}
+
+buildQueue();
+</script>
+</body>
+</html>
