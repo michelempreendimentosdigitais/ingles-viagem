@@ -191,13 +191,39 @@ let attempts = 0;
 let currentCard = null;
 let lastCardId = null;
 
-function initDeck(){
+const PKEY = 'inglesViagem_aula1_pronunciaProgress';
+function saveProgress(){
+  try{ localStorage.setItem(PKEY, JSON.stringify({deck, total, mastered, attempts, lastCardId})); }catch(e){}
+}
+function loadProgress(){
+  try{ const raw = localStorage.getItem(PKEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function clearProgress(){
+  try{ localStorage.removeItem(PKEY); }catch(e){}
+}
+
+function startFresh(){
+  clearProgress();
   deck = shuffle(deckSource).map((c,i)=>({...c, streak:0, id:i}));
   total = deck.length; mastered = 0; attempts = 0; lastCardId = null;
   document.getElementById('doneScreen').classList.add('hidden');
   document.getElementById('stage').classList.remove('hidden');
   updateProgress();
   nextCard();
+}
+
+function initDeck(){
+  const saved = loadProgress();
+  if(saved && saved.deck && saved.deck.length > 0){
+    deck = saved.deck; total = saved.total; mastered = saved.mastered;
+    attempts = saved.attempts; lastCardId = saved.lastCardId;
+    document.getElementById('doneScreen').classList.add('hidden');
+    document.getElementById('stage').classList.remove('hidden');
+    updateProgress();
+    nextCard();
+  } else {
+    startFresh();
+  }
 }
 
 function updateProgress(){
@@ -282,6 +308,7 @@ function rate(knewIt){
     playTone([220,170],'square',0.13);
   }
   updateProgress();
+  saveProgress();
   nextCard();
 }
 
@@ -340,7 +367,7 @@ function burstConfetti(){
   }
 }
 
-document.getElementById('restartBtn').onclick = initDeck;
+document.getElementById('restartBtn').onclick = startFresh;
 initDeck();
 
 setTimeout(function(){
