@@ -111,6 +111,7 @@ h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;margin:0;}
       <p id="doneSub"></p>
       <p id="nextDueText"></p>
       <button class="restart-btn" id="restartBtn">Revisar de novo agora</button>
+      <p style="margin-top:16px;"><a href="#" id="resetAllBtn" style="font-size:12px;color:#8a94b3;text-decoration:underline;">Recomeçar tudo do zero</a></p>
     </div>
   </div>
 
@@ -540,6 +541,16 @@ function finishSession(){
 }
 
 document.getElementById('restartBtn').onclick=()=>buildQueue();
+document.getElementById('resetAllBtn').onclick=(e)=>{
+  e.preventDefault();
+  const ok = confirm('Isso vai apagar todo o seu progresso (Parte 1 e Parte 2) e começar tudo do zero. Tem certeza?');
+  if(!ok) return;
+  stateA = freshState(); stateB = freshState();
+  flags = {completedA:false, completedB:false, teaserShown:false};
+  saveJSON(KEY_A, stateA); saveJSON(KEY_B, stateB); saveJSON(KEY_FLAGS, flags);
+  phase='A';
+  buildQueue();
+};
 document.getElementById('unlockBtn').onclick=()=>{ phase='B'; buildQueue(); };
 document.getElementById('ruleBtn').onclick=()=>document.getElementById('ruleModal').classList.remove('hidden');
 document.getElementById('modalCloseBtn').onclick=()=>document.getElementById('ruleModal').classList.add('hidden');
