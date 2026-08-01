@@ -165,6 +165,7 @@ h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;margin:0;}
     </div>
     <div id="ruleContent"></div>
     <button class="modal-close" id="modalCloseBtn">Entendi / Got it</button>
+    <p style="text-align:center;margin-top:12px;"><a href="#" id="resetAllBtnModal" style="font-size:12px;color:#8a94b3;text-decoration:underline;">🔄 Recomeçar tudo do zero</a></p>
   </div>
 </div>
 
@@ -541,16 +542,21 @@ function finishSession(){
 }
 
 document.getElementById('restartBtn').onclick=()=>buildQueue();
-document.getElementById('resetAllBtn').onclick=(e)=>{
-  e.preventDefault();
+function resetAllProgress(){
   const ok = confirm('Isso vai apagar todo o seu progresso (Parte 1 e Parte 2) e começar tudo do zero. Tem certeza?');
   if(!ok) return;
   stateA = freshState(); stateB = freshState();
   flags = {completedA:false, completedB:false, teaserShown:false};
   saveJSON(KEY_A, stateA); saveJSON(KEY_B, stateB); saveJSON(KEY_FLAGS, flags);
   phase='A';
+  document.getElementById('ruleModal').classList.add('hidden');
+  document.getElementById('congratsScreen').classList.add('hidden');
+  document.getElementById('salesScreen').classList.add('hidden');
+  document.getElementById('doneScreen').classList.add('hidden');
   buildQueue();
-};
+}
+document.getElementById('resetAllBtn').onclick=(e)=>{ e.preventDefault(); resetAllProgress(); };
+document.getElementById('resetAllBtnModal').onclick=(e)=>{ e.preventDefault(); resetAllProgress(); };
 document.getElementById('unlockBtn').onclick=()=>{ phase='B'; buildQueue(); };
 document.getElementById('ruleBtn').onclick=()=>document.getElementById('ruleModal').classList.remove('hidden');
 document.getElementById('modalCloseBtn').onclick=()=>document.getElementById('ruleModal').classList.add('hidden');
