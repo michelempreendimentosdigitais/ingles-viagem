@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 4 — Carro Alugado e GPS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#132244; --navy-deep:#0b1730; --navy-soft:#2b3d63;
+    --gold:#c9a227; --gold-soft:#e6c35c; --cream:#f6f1e4; --ink:#132244;
+    --land:#1c3a5e; --land-line:#3a5a86; --green:#4f7a5c; --green-bg:#bfe3c4; --red-bg:#e8b4b4; --red:#c56b6b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--navy-deep);
+    background-image:radial-gradient(circle at 15% 10%, rgba(201,162,39,0.08), transparent 40%),radial-gradient(circle at 85% 90%, rgba(201,162,39,0.06), transparent 40%);
+    font-family:'Inter',sans-serif;color:var(--cream);padding:0 0 60px;min-height:100vh;}
+  .topbar{background:var(--navy);border-bottom:2px dashed var(--gold);padding:28px 20px 22px;text-align:center;position:relative;}
+  .topbar::before,.topbar::after{content:"";position:absolute;bottom:-14px;width:28px;height:28px;background:var(--navy-deep);border-radius:50%;}
+  .topbar::before{left:-14px;} .topbar::after{right:-14px;}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px;}
+  h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(22px,5vw,32px);margin:0 0 6px;letter-spacing:-0.5px;}
+  .subtitle{font-size:13.5px;color:#c7cee0;max-width:520px;margin:0 auto;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 18px;}
+  .map-slide{margin:26px 0 10px;border-radius:14px;overflow:hidden;border:1.5px solid var(--gold);box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+  .map-slide .map-cap{background:var(--navy);padding:10px 16px;font-family:'Poppins',sans-serif;font-size:12.5px;font-weight:700;color:var(--gold-soft);letter-spacing:1px;text-transform:uppercase;text-align:center;}
+  .map-frame{width:100%;aspect-ratio:16/9;background:linear-gradient(180deg,#0e1c38,#132a4f);}
+  svg.usmap{display:block;width:100%;height:100%;}
+  .trail{fill:none;stroke:var(--gold);stroke-width:3;stroke-dasharray:6 7;opacity:0.55;}
+  .land{fill:var(--land);stroke:var(--land-line);stroke-width:2;}
+  .stop-circle{fill:var(--navy);stroke:var(--gold);stroke-width:2.5;}
+  .stop-circle.active{fill:var(--gold);stroke:var(--cream);}
+  .stop-circle.done{fill:var(--gold-soft);stroke:var(--gold-soft);}
+  .stop-label{font-family:'Inter',sans-serif;font-size:10px;fill:#c7cee0;}
+  .stop-label.active{fill:var(--gold-soft);font-weight:700;}
+  .traveler{filter:drop-shadow(0 3px 5px rgba(0,0,0,0.5));}
+  .pulse{fill:none;stroke:var(--gold-soft);stroke-width:2;opacity:0.8;transform-origin:center;animation:pulse 2s ease-out infinite;}
+  @keyframes pulse{0%{r:14;opacity:0.8;}100%{r:32;opacity:0;}}
+  .traveler-move{animation:moveTraveler 2.4s ease-in-out forwards;animation-delay:.4s;}
+  @keyframes moveTraveler{0%{transform:translate(0,0);}100%{transform:translate(var(--dx),var(--dy));}}
+  .map-note{font-size:12px;color:#a9b3cc;text-align:center;margin:8px 0 4px;}
+  .map-note b{color:var(--gold-soft);}
+  .section-head{margin:34px 0 14px;display:flex;align-items:baseline;gap:10px;}
+  .section-head .tag{font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;background:var(--gold);color:var(--navy-deep);padding:3px 9px;border-radius:4px;letter-spacing:1px;}
+  .section-head h2{font-family:'Poppins',sans-serif;font-size:17px;margin:0;color:var(--cream);}
+  .section-note{font-size:12.5px;color:#a9b3cc;margin:-6px 0 14px;line-height:1.5;}
+  .rescue{background:linear-gradient(135deg,var(--navy) 0%, #1c2f57 100%);border:1.5px solid var(--gold);border-radius:14px;padding:18px 18px 6px;margin-top:8px;box-shadow:0 8px 24px rgba(0,0,0,0.35);}
+  .rescue-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--gold-soft);display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .rescue-sub{font-size:12px;color:#b9c2da;margin-bottom:12px;}
+  .ticket{background:var(--cream);color:var(--ink);border-radius:12px;margin-bottom:14px;display:flex;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+  .ticket-main{flex:1;padding:14px 16px;min-width:0;}
+  .ticket-stub{width:64px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;cursor:pointer;border:none;}
+  .ticket-stub::before{content:"";position:absolute;top:0;bottom:0;left:0;border-left:2px dashed var(--navy-deep);opacity:0.5;}
+  .ticket-stub .play-ico{width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:12px solid var(--gold-soft);}
+  .ticket-stub .play-label{font-size:9px;color:var(--gold-soft);letter-spacing:0.5px;font-weight:600;}
+  .ticket-stub.playing{background:var(--gold);}
+  .ticket-stub.playing .play-ico{border-left-color:var(--navy);}
+  .ticket-stub.playing .play-label{color:var(--navy);}
+  .en{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;line-height:1.3;margin-bottom:3px;}
+  .phon{font-size:12.5px;color:#6b5b2a;font-style:italic;margin-bottom:6px;}
+  .pt{font-size:13px;color:var(--navy-soft);border-top:1px dashed #cfc4a4;padding-top:6px;margin-top:2px;}
+  .pt.hidden{opacity:0;max-height:0;overflow:hidden;border-top:none;padding-top:0;margin-top:0;}
+  .tap-hint{font-size:11px;color:#8a7d55;margin-top:4px;cursor:pointer;display:inline-block;}
+  .vocab-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
+  .vocab-card{background:var(--cream);border-radius:12px;padding:14px 12px 12px;text-align:center;position:relative;box-shadow:0 4px 14px rgba(0,0,0,0.25);cursor:pointer;}
+  .vocab-icon{font-size:34px;margin-bottom:6px;}
+  .vocab-en{font-family:'Poppins',sans-serif;font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:2px;}
+  .vocab-phon{font-size:10.5px;font-style:italic;color:#6b5b2a;margin-bottom:5px;}
+  .vocab-pt{font-size:11.5px;color:var(--navy-soft);border-top:1px dashed #cfc4a4;padding-top:5px;}
+  .vocab-play{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:3px;background:var(--navy);border-radius:11px;padding:3px 7px 3px 6px;}
+  .vocab-play .p{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--gold-soft);}
+  .vocab-play .lbl{font-size:8.5px;color:var(--gold-soft);font-weight:700;}
+  .vocab-play.playing{background:var(--gold);}
+  .vocab-play.playing .p{border-left-color:var(--navy);}
+  .vocab-play.playing .lbl{color:var(--navy);}
+  .game-box{background:var(--navy);border:1.5px solid var(--gold);border-radius:14px;padding:18px;position:relative;overflow:hidden;margin-bottom:6px;}
+  .game-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--gold-soft);margin-bottom:4px;}
+  .game-sub{font-size:12px;color:#b9c2da;margin-bottom:14px;}
+  .confetti-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .confetti-piece{position:absolute;width:6px;height:10px;top:0;opacity:0.95;animation:confettiFall 900ms ease-out forwards;}
+  @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(140px) rotate(420deg);opacity:0;}}
+  .game-win{display:none;text-align:center;font-family:'Poppins',sans-serif;font-weight:700;color:var(--gold-soft);font-size:14px;margin-top:14px;}
+  .game-win.show{display:block;}
+  /* pair game (number + letter) */
+  .pair-cols{display:flex;gap:12px;}
+  .pair-col{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .pair-item{background:var(--cream);border-radius:10px;padding:10px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink);border:3px solid transparent;display:flex;align-items:center;gap:8px;user-select:none;}
+  .pair-badge{font-family:'Poppins',sans-serif;font-weight:800;background:var(--navy);color:var(--gold-soft);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+  .pair-item.selected{border-color:var(--gold);}
+  .pair-item.correct{background:var(--green-bg);border-color:var(--green);color:#204d29;cursor:default;}
+  .pair-item.wrong{background:var(--red-bg);border-color:var(--red);}
+  /* listening quiz */
+  .lq-progress{font-size:12px;color:#b9c2da;text-align:center;margin-bottom:12px;}
+  .lq-play{display:block;margin:0 auto 16px;background:var(--gold);color:var(--navy-deep);border:none;border-radius:20px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer;}
+  .lq-options{display:flex;flex-direction:column;gap:8px;}
+  .lq-opt{background:var(--cream);color:var(--ink);border-radius:10px;padding:11px 12px;cursor:pointer;font-size:13px;border:3px solid transparent;}
+  .lq-opt.correct{background:var(--green-bg);border-color:var(--green);}
+  .lq-opt.wrong{background:var(--red-bg);border-color:var(--red);}
+  /* true/false */
+  .tf-progress{font-size:12px;color:#b9c2da;text-align:center;margin-bottom:12px;}
+  .tf-card{background:var(--cream);border-radius:12px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+  .tf-en{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;}
+  .tf-pt{font-size:14px;color:var(--navy-soft);}
+  .tf-row{display:flex;gap:10px;}
+  .tf-btn{flex:1;border:none;border-radius:14px;padding:14px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;cursor:pointer;}
+  .tf-true{background:var(--green);} .tf-false{background:var(--red);}
+  .result-box{text-align:center;padding:6px 0;}
+  .result-box .tier{font-family:'Poppins',sans-serif;font-weight:700;color:var(--gold-soft);font-size:15px;margin-bottom:8px;}
+  .result-box button{background:var(--gold);color:var(--navy-deep);border:none;border-radius:20px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;}
+  footer{text-align:center;margin-top:40px;font-size:11.5px;color:#7c86a3;padding:0 20px;}
+  footer .brand{color:var(--gold-soft);font-weight:600;}
+  /* direction game */
+  .dir-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .dir-opt{background:var(--cream);border-radius:12px;padding:16px 8px;text-align:center;cursor:pointer;border:3px solid transparent;}
+  .dir-opt .dir-ico{font-size:30px;margin-bottom:4px;}
+  .dir-opt .dir-lbl{font-size:11px;font-weight:700;color:var(--navy-soft);text-transform:uppercase;}
+  .dir-opt.correct{background:var(--green-bg);border-color:var(--green);}
+  .dir-opt.wrong{background:var(--red-bg);border-color:var(--red);}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="eyebrow">Passaporte de Sobrevivência · Aula 4</div>
+  <h1>Carro Alugado e GPS</h1>
+  <div class="subtitle">Toque nos botões "🔊 Ouvir" para escutar a pronúncia.</div>
+</div>
+<div class="wrap">
+  <div class="map-slide">
+    <div class="map-cap">📍 Você está aqui: Carro Alugado e GPS</div>
+    <div class="map-frame"><svg class="usmap" viewBox="0 0 1000 562" xmlns="http://www.w3.org/2000/svg" id="mapOpen"></svg></div>
+  </div>
+  <div class="map-note">Próxima parada: <b>Hotel.</b></div>
+
+  <div class="section-head"><span class="tag">01</span><h2>Vocabulário do carro e GPS</h2></div>
+  <div class="section-note">O básico pra alugar um carro e usar o GPS sem susto.</div>
+  <div class="vocab-grid" id="vocabCards"></div>
+
+  <div class="section-head"><span class="tag">02</span><h2>Jogo — Ouça e Escolha</h2></div>
+  <div class="game-box">
+    <div class="lq-progress">Pergunta <span id="lqIdx">1</span>/6 — Acertos: <span id="lqScore">0</span></div>
+    <button class="lq-play" id="lqPlayBtn">🔊 OUVIR A PALAVRA</button>
+    <div class="lq-options" id="lqOptions"></div>
+    <div class="result-box hidden" id="lqResult"></div>
+  </div>
+
+  <div class="section-head"><span class="tag">03</span><h2>Retirando o carro alugado</h2></div>
+  <div class="section-note">Na locadora, antes de sair dirigindo.</div>
+  <div id="taxiCards"></div>
+
+  <div class="section-head"><span class="tag">04</span><h2>Jogo — Vire Certo (comandos de GPS)</h2></div>
+  <div class="game-box">
+    <div class="lq-progress">Comando <span id="drIdx">1</span>/6 — Acertos: <span id="drScore">0</span></div>
+    <button class="lq-play" id="drPlayBtn">🔊 OUVIR O COMANDO</button>
+    <div class="dir-options" id="drOptions"></div>
+    <div class="result-box hidden" id="drResult"></div>
+  </div>
+
+  
+
+  <div class="section-head"><span class="tag">05</span><h2>Lugares na cidade</h2></div>
+  <div class="section-note">Achando o que precisa enquanto dirige.</div>
+  <div id="cityCards"></div>
+
+  <div class="section-head"><span class="tag">06</span><h2>Jogo — Certo ou Errado</h2></div>
+  <div class="game-box">
+    <div class="tf-progress">Frase <span id="tfIdx">1</span>/6 — Acertos: <span id="tfScore">0</span></div>
+    <div class="tf-card"><div class="tf-en" id="tfEn"></div><div class="tf-pt" id="tfPt"></div></div>
+    <div class="tf-row" id="tfRow">
+      <button class="tf-btn tf-false" onclick="tfAnswer(false)">❌ Errado</button>
+      <button class="tf-btn tf-true" onclick="tfAnswer(true)">✅ Certo</button>
+    </div>
+    <div class="result-box hidden" id="tfResult"></div>
+  </div>
+
+  <div class="map-slide" style="margin-top:36px;">
+    <div class="map-cap">✅ Aula concluída — seguindo viagem</div>
+    <div class="map-frame"><svg class="usmap" viewBox="0 0 1000 562" xmlns="http://www.w3.org/2000/svg" id="mapClose"></svg></div>
+  </div>
+  <div class="map-note">Você concluiu <b>Transporte</b>. Na próxima aula: <b>Hotel</b>.</div>
+  <footer>Material do curso <span class="brand">Inglês de Viagem</span> — funciona offline depois de salvo.</footer>
+</div>
+
+<script>
+/* ---------- MAP ---------- */
+const stops = [
+  {name:"Comunicação útil", icon:"chat", x:80, y:420},{name:"Aeroporto", icon:"plane", x:170, y:290},
+  {name:"Imigração", icon:"passport", x:260, y:420},{name:"Transporte", icon:"taxi", x:350, y:280},
+  {name:"Hotel", icon:"hotel", x:440, y:420},{name:"Fast food", icon:"food", x:530, y:280},
+  {name:"Directions", icon:"pin", x:620, y:420},{name:"Restaurantes", icon:"fork", x:710, y:280},
+  {name:"Compras", icon:"bag", x:800, y:420},{name:"Emergências", icon:"cross", x:890, y:280},
+  {name:"Revisão", icon:"star", x:950, y:350}
+];
+const CURRENT = 3;
+function iconMarkup(type){
+  const c = 'fill="var(--cream)"';
+  switch(type){
+    case "chat": return '<path d="M-8,-6 h16 a3,3 0 0 1 3,3 v6 a3,3 0 0 1 -3,3 h-9 l-5,4 v-4 h-2 a3,3 0 0 1 -3,-3 v-6 a3,3 0 0 1 3,-3 Z" '+c+'/>';
+    case "plane": return '<path d="M-9,3 L1,0 L4,-9 L6,-8 L4,1 L11,-1 L12,1 L5,4 L4,10 L2,9 L3,3 Z" '+c+'/>';
+    case "passport": return '<rect x="-6" y="-8" width="12" height="16" rx="1.5" '+c+'/><circle cx="0" cy="-2" r="2.4" fill="var(--navy)"/>';
+    case "taxi": return '<rect x="-8" y="-3" width="16" height="7" rx="1.5" '+c+'/><circle cx="-4" cy="5" r="2" '+c+'/><circle cx="4" cy="5" r="2" '+c+'/>';
+    case "hotel": return '<rect x="-7" y="-6" width="14" height="12" rx="1" '+c+'/><rect x="-3" y="0" width="6" height="6" fill="var(--navy)"/>';
+    case "food": return '<path d="M-6,-6 h12 l-2,12 h-8 z" '+c+'/>';
+    case "pin": return '<path d="M0,-8 C5,-8 7,-4 7,0 C7,5 0,9 0,9 C0,9 -7,5 -7,0 C-7,-4 -5,-8 0,-8 Z" '+c+'/>';
+    case "fork": return '<rect x="-1.5" y="-8" width="3" height="16" '+c+'/><rect x="-6" y="-8" width="2" height="7" '+c+'/><rect x="4" y="-8" width="2" height="7" '+c+'/>';
+    case "bag": return '<rect x="-6" y="-4" width="12" height="10" rx="1" '+c+'/><path d="M-3,-4 v-3 a3,3 0 0 1 6,0 v3" fill="none" stroke="var(--cream)" stroke-width="1.6"/>';
+    case "cross": return '<rect x="-2" y="-7" width="4" height="14" rx="1" '+c+'/><rect x="-7" y="-2" width="14" height="4" rx="1" '+c+'/>';
+    case "star": return '<path d="M0,-8 L2.3,-2.5 8,-2 3.5,1.7 5,8 0,4.5 -5,8 -3.5,1.7 -8,-2 -2.3,-2.5 Z" '+c+'/>';
+    default: return '';
+  }
+}
+function buildMap(svgId, animate){
+  const svg = document.getElementById(svgId); const ns = "http://www.w3.org/2000/svg";
+  svg.innerHTML = ""; svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+  const land = document.createElementNS(ns,"path"); land.setAttribute("class","land");
+  land.setAttribute("d","M60,380 L100,260 L180,190 L300,150 L420,140 L560,150 L680,160 L800,190 L900,240 L950,320 L920,400 L880,460 L780,480 L680,470 L580,490 L480,480 L380,490 L280,470 L180,460 L110,440 Z");
+  svg.appendChild(land);
+  let d = "M " + stops[0].x + " " + stops[0].y;
+  for(let i=1;i<stops.length;i++){ d += " L " + stops[i].x + " " + stops[i].y; }
+  const trail = document.createElementNS(ns,"path"); trail.setAttribute("class","trail"); trail.setAttribute("d", d);
+  svg.appendChild(trail);
+  stops.forEach((s,i)=>{
+    const g = document.createElementNS(ns,"g"); g.setAttribute("transform", "translate("+s.x+","+s.y+")");
+    const isActive = i === CURRENT && !animate; const isDone = animate && i === CURRENT;
+    if(isActive){ const pulse = document.createElementNS(ns,"circle"); pulse.setAttribute("class","pulse"); pulse.setAttribute("cx",0); pulse.setAttribute("cy",0); pulse.setAttribute("r",14); g.appendChild(pulse); }
+    const circ = document.createElementNS(ns,"circle"); circ.setAttribute("r",14); circ.setAttribute("class","stop-circle"+(isActive?" active":isDone?" done":"")); g.appendChild(circ);
+    const iconG = document.createElementNS(ns,"g"); iconG.innerHTML = iconMarkup(s.icon);
+    if(isActive){ iconG.querySelectorAll('[fill="var(--cream)"]').forEach(el=>el.setAttribute('fill','var(--navy-deep)')); }
+    g.appendChild(iconG);
+    const label = document.createElementNS(ns,"text"); label.setAttribute("class","stop-label"+(isActive?" active":"")); label.setAttribute("text-anchor","middle"); label.setAttribute("y",30);
+    label.textContent = (i+1)+". "+s.name; g.appendChild(label);
+    svg.appendChild(g);
+  });
+  const start = stops[CURRENT]; const end = animate ? stops[Math.min(CURRENT+1, stops.length-1)] : stops[CURRENT];
+  const trav = document.createElementNS(ns,"g"); trav.setAttribute("class","traveler" + (animate ? " traveler-move" : ""));
+  trav.setAttribute("transform","translate("+start.x+","+(start.y-28)+")");
+  if(animate){ trav.style.setProperty('--dx', (end.x-start.x)+"px"); trav.style.setProperty('--dy', (end.y-start.y)+"px"); }
+  trav.innerHTML = '<circle cx="0" cy="-6" r="5" fill="var(--cream)"/><path d="M0,-1 v10 M-6,4 L0,-1 L6,4 M-4,9 L0,4 L4,9" stroke="var(--cream)" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  svg.appendChild(trav);
+}
+buildMap('mapOpen', false); buildMap('mapClose', true);
+
+/* ---------- SOUND ---------- */
+let audioCtx=null, cachedVoices=[];
+function refreshVoices(){ cachedVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }
+if('speechSynthesis' in window){ refreshVoices(); window.speechSynthesis.onvoiceschanged = refreshVoices; }
+function speak(text, btn){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.92;
+  const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v=>v.lang==='en-US') || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('en'));
+  if(enVoice) u.voice = enVoice;
+  if(btn) btn.classList.add('playing');
+  u.onend = ()=>{ if(btn) btn.classList.remove('playing'); };
+  u.onerror = ()=>{ if(btn) btn.classList.remove('playing'); };
+  window.speechSynthesis.speak(u);
+}
+function getAudioCtx(){ if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } return audioCtx; }
+function playTone(freqs, type, dur){
+  try{
+    const ctx = getAudioCtx();
+    freqs.forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type=type; o.frequency.value=f; o.connect(g); g.connect(ctx.destination);
+      const t0 = ctx.currentTime + i*dur;
+      g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.22,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+      o.start(t0); o.stop(t0+dur+0.02);
+    });
+  }catch(e){}
+}
+function playOk(){ playTone([523.25,659.25,783.99],'sine',0.1); }
+function playNo(){ playTone([220,170],'square',0.13); }
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function spawnConfetti(layerId, count){
+  const layer = document.getElementById(layerId); if(!layer) return;
+  const colors=['#c9a227','#e6c35c','#f6f1e4','#4f7a5c'];
+  for(let i=0;i<(count||20);i++){
+    const p=document.createElement('div'); p.className='confetti-piece';
+    p.style.left=(Math.random()*100)+'%'; p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay=(Math.random()*0.2)+'s';
+    layer.appendChild(p); setTimeout(()=>p.remove(),1100);
+  }
+}
+
+/* ---------- CONTENT ---------- */
+const vocabData = [
+  {en:"Rental car", phon:"réntâl kár", pt:"Carro alugado", icon:"🚗"},
+  {en:"GPS / Navigation", phon:"dji-pí-és / nevigéichân", pt:"GPS / Navegação", icon:"🧭"},
+  {en:"Highway", phon:"ráiuêi", pt:"Rodovia", icon:"🛣️"},
+  {en:"Exit", phon:"éksit", pt:"Saída (da rodovia)", icon:"🚧"},
+  {en:"Speed limit", phon:"spíd límit", pt:"Limite de velocidade", icon:"🚸"},
+  {en:"Parking lot", phon:"párkin lót", pt:"Estacionamento", icon:"🅿️"},
+  {en:"Gas station", phon:"gés stêichân", pt:"Posto de gasolina", icon:"⛽"},
+  {en:"Traffic", phon:"tréfik", pt:"Trânsito", icon:"🚗"},
+  {en:"Route", phon:"rút", pt:"Rota", icon:"🗺️"},
+  {en:"Destination", phon:"destinéichân", pt:"Destino", icon:"📍"}
+];
+const taxiCards = [
+  {en:"I have a reservation.", phon:"ái rev a rezervéichân", pt:"Tenho uma reserva."},
+  {en:"I'd like to rent a car for a week.", phon:"áid láik tu rént a kár fôr a uík", pt:"Gostaria de alugar um carro por uma semana."},
+  {en:"Do you have an automatic car?", phon:"du iú rev en ótomátik kár?", pt:"Você tem carro automático?"},
+  {en:"Is insurance included?", phon:"iz inchúrans inklúdid?", pt:"O seguro está incluído?"},
+  {en:"Where do I return the car?", phon:"uér du ái ritérn dá kár?", pt:"Onde eu devolvo o carro?"},
+  {en:"Is there a GPS included?", phon:"iz dér a dji-pí-és inklúdid?", pt:"Tem GPS incluso?"}
+];
+const cityCards = [
+  {en:"Where is the nearest gas station?", phon:"uér iz dá níerest gés stêichân?", pt:"Onde fica o posto de gasolina mais próximo?"},
+  {en:"Is there a pharmacy nearby?", phon:"iz dér a fármâsi nírbái?", pt:"Tem uma farmácia por perto?"},
+  {en:"Where is the nearest grocery store?", phon:"uér iz dá níerest grôusri stôr?", pt:"Onde fica o mercado mais próximo?"},
+  {en:"How far is the mall from here?", phon:"rau fár iz dá mól fróm rír?", pt:"Quão longe fica o shopping daqui?"},
+  {en:"Is there parking nearby?", phon:"iz dér párkin nírbái?", pt:"Tem estacionamento por perto?"},
+  {en:"What's the fastest route?", phon:"uáts dá féstest rút?", pt:"Qual é a rota mais rápida?"}
+];
+
+function buildTicket(item){
+  const ticket = document.createElement('div'); ticket.className='ticket';
+  const main=document.createElement('div'); main.className='ticket-main';
+  const en=document.createElement('div'); en.className='en'; en.textContent=item.en;
+  const phon=document.createElement('div'); phon.className='phon'; phon.textContent='"'+item.phon+'"';
+  const pt=document.createElement('div'); pt.className='pt'; pt.textContent=item.pt;
+  main.append(en,phon,pt);
+  const stub=document.createElement('button'); stub.className='ticket-stub';
+  const ico=document.createElement('div'); ico.className='play-ico';
+  const lbl=document.createElement('div'); lbl.className='play-label'; lbl.textContent='OUVIR';
+  stub.append(ico,lbl); stub.onclick=()=>speak(item.en, stub);
+  ticket.append(main,stub); return ticket;
+}
+function buildVocabCard(item){
+  const card=document.createElement('div'); card.className='vocab-card';
+  card.innerHTML=`<div class="vocab-play"><div class="p"></div><span class="lbl">OUVIR</span></div>
+    <div class="vocab-icon">${item.icon}</div>
+    <div class="vocab-en">${item.en}</div><div class="vocab-phon">"${item.phon}"</div><div class="vocab-pt">${item.pt}</div>`;
+  const btn=card.querySelector('.vocab-play'); card.onclick=()=>speak(item.en, btn); return card;
+}
+document.getElementById('vocabCards').append(...vocabData.map(buildVocabCard));
+document.getElementById('taxiCards').append(...taxiCards.map(buildTicket));
+document.getElementById('cityCards').append(...cityCards.map(buildTicket));
+
+/* ---------- GAME 1: LISTENING MULTIPLE CHOICE (vocab) ---------- */
+let lqQueue=[], lqIdx=0, lqScore=0;
+function startLQ(){
+  lqQueue = shuffle(vocabData); lqIdx=0; lqScore=0;
+  document.getElementById('lqResult').classList.add('hidden');
+  document.getElementById('lqPlayBtn').style.display='block';
+  document.getElementById('lqOptions').style.display='flex';
+  showLQ();
+}
+function showLQ(){
+  document.getElementById('lqIdx').textContent = lqIdx+1;
+  document.getElementById('lqScore').textContent = lqScore;
+  const current = lqQueue[lqIdx];
+  document.getElementById('lqPlayBtn').onclick = ()=>speak(current.en, null);
+  const others = shuffle(vocabData.filter(c=>c.en!==current.en)).slice(0,2);
+  const opts = shuffle([current, ...others]);
+  const box = document.getElementById('lqOptions'); box.innerHTML='';
+  opts.forEach(opt=>{
+    const b=document.createElement('div'); b.className='lq-opt'; b.textContent=opt.icon+' '+opt.pt;
+    b.onclick=()=>checkLQ(opt, current, b);
+    box.appendChild(b);
+  });
+}
+function checkLQ(opt, current, btnEl){
+  const box = document.getElementById('lqOptions');
+  if(box.dataset.locked) return; box.dataset.locked='1';
+  const correct = opt.en===current.en;
+  if(correct){ btnEl.classList.add('correct'); lqScore++; playOk(); }
+  else { btnEl.classList.add('wrong'); playNo();
+    [...box.children].forEach(b=>{ if(b.textContent===current.icon+' '+current.pt) b.classList.add('correct'); });
+  }
+  setTimeout(()=>{ box.dataset.locked='';
+    lqIdx++; if(lqIdx<lqQueue.length) showLQ(); else finishLQ();
+  }, 900);
+}
+function finishLQ(){
+  document.getElementById('lqPlayBtn').style.display='none';
+  document.getElementById('lqOptions').style.display='none';
+  const total=lqQueue.length, pct=lqScore/total;
+  const tier = pct>=0.9?'🏆 Excelente!':pct>=0.7?'👍 Muito bom!':'💪 Continue praticando!';
+  const box=document.getElementById('lqResult');
+  box.innerHTML = `<div class="tier">${tier}</div><div style="color:#c7cee0;margin-bottom:10px;">Você acertou ${lqScore} de ${total}.</div><button onclick="startLQ()">🔄 Jogar novamente</button>`;
+  box.classList.remove('hidden');
+}
+startLQ();
+
+/* ---------- GAME 2: VIRE CERTO (direction commands) ---------- */
+const dirCommands = [
+  {en:"Turn left.", pt:"Vire à esquerda", icon:"⬅️"},
+  {en:"Turn right.", pt:"Vire à direita", icon:"➡️"},
+  {en:"Go straight.", pt:"Siga em frente", icon:"⬆️"},
+  {en:"Take the next exit.", pt:"Pegue a próxima saída", icon:"🚧"},
+  {en:"You have arrived.", pt:"Você chegou ao destino", icon:"📍"},
+  {en:"Recalculating route.", pt:"Recalculando a rota", icon:"🔄"}
+];
+let drQueue=[], drIdx=0, drScore=0;
+function startDR(){
+  drQueue = shuffle(dirCommands); drIdx=0; drScore=0;
+  document.getElementById('drResult').classList.add('hidden');
+  document.getElementById('drPlayBtn').style.display='block';
+  document.getElementById('drOptions').style.display='grid';
+  showDR();
+}
+function showDR(){
+  document.getElementById('drIdx').textContent = drIdx+1;
+  document.getElementById('drScore').textContent = drScore;
+  const current = drQueue[drIdx];
+  document.getElementById('drPlayBtn').onclick = ()=>speak(current.en, null);
+  const others = shuffle(dirCommands.filter(c=>c.en!==current.en)).slice(0,3);
+  const opts = shuffle([current, ...others]);
+  const box = document.getElementById('drOptions'); box.innerHTML='';
+  opts.forEach(opt=>{
+    const b=document.createElement('div'); b.className='dir-opt';
+    b.innerHTML = `<div class="dir-ico">${opt.icon}</div><div class="dir-lbl">${opt.pt}</div>`;
+    b.onclick=()=>checkDR(opt, current, b);
+    box.appendChild(b);
+  });
+}
+function checkDR(opt, current, btnEl){
+  const box = document.getElementById('drOptions');
+  if(box.dataset.locked) return; box.dataset.locked='1';
+  const correct = opt.en===current.en;
+  if(correct){ btnEl.classList.add('correct'); drScore++; playOk(); }
+  else { btnEl.classList.add('wrong'); playNo();
+    [...box.children].forEach(b=>{ if(b.innerHTML.includes(current.icon)) b.classList.add('correct'); });
+  }
+  setTimeout(()=>{ box.dataset.locked='';
+    drIdx++; if(drIdx<drQueue.length) showDR(); else finishDR();
+  }, 900);
+}
+function finishDR(){
+  document.getElementById('drPlayBtn').style.display='none';
+  document.getElementById('drOptions').style.display='none';
+  const total=drQueue.length, pct=drScore/total;
+  const tier = pct>=0.9?'🏆 Excelente!':pct>=0.7?'👍 Muito bom!':'💪 Continue praticando!';
+  const box=document.getElementById('drResult');
+  box.innerHTML = `<div class="tier">${tier}</div><div style="color:#c7cee0;margin-bottom:10px;">Você acertou ${drScore} de ${total}.</div><button onclick="startDR()">🔄 Jogar novamente</button>`;
+  box.classList.remove('hidden');
+}
+startDR();
+
+/* ---------- GAME 3: TRUE OR FALSE ---------- */
+let tfQueue=[], tfIdx=0, tfScore=0;
+function buildTFQueue(){
+  const pool = [...taxiCards, ...cityCards];
+  return shuffle(pool.map(c=>{
+    const isTrue = Math.random()<0.5;
+    let shownPt = c.pt;
+    if(!isTrue){
+      const other = pool.filter(x=>x.pt!==c.pt)[Math.floor(Math.random()*(pool.length-1))];
+      shownPt = other.pt;
+    }
+    return {en:c.en, shownPt, isTrue};
+  })).slice(0,6);
+}
+function startTF(){
+  tfQueue = buildTFQueue(); tfIdx=0; tfScore=0;
+  document.getElementById('tfResult').classList.add('hidden');
+  document.getElementById('tfRow').style.display='flex';
+  document.querySelector('.tf-card').style.display='block';
+  showTF();
+}
+function showTF(){
+  document.getElementById('tfIdx').textContent = tfIdx+1;
+  document.getElementById('tfScore').textContent = tfScore;
+  const c = tfQueue[tfIdx];
+  document.getElementById('tfEn').textContent = c.en;
+  document.getElementById('tfPt').textContent = c.shownPt;
+}
+function tfAnswer(said){
+  const c = tfQueue[tfIdx];
+  if(said===c.isTrue){ tfScore++; playOk(); } else { playNo(); }
+  tfIdx++;
+  if(tfIdx<tfQueue.length) showTF(); else finishTF();
+}
+function finishTF(){
+  document.querySelector('.tf-card').style.display='none';
+  document.getElementById('tfRow').style.display='none';
+  const total=tfQueue.length, pct=tfScore/total;
+  const tier = pct>=0.9?'🏆 Excelente!':pct>=0.7?'👍 Muito bom!':'💪 Continue praticando!';
+  const box=document.getElementById('tfResult');
+  box.innerHTML = `<div class="tier">${tier}</div><div style="color:#c7cee0;margin-bottom:10px;">Você acertou ${tfScore} de ${total}.</div><button onclick="startTF()">🔄 Jogar novamente</button>`;
+  box.classList.remove('hidden');
+}
+startTF();
+</script>
+</body>
+</html>
