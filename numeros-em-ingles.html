@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Números em Inglês</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#132244; --navy-deep:#0b1730; --navy-soft:#2b3d63;
+    --gold:#c9a227; --gold-soft:#e6c35c; --cream:#f6f1e4; --ink:#132244;
+    --land:#1c3a5e; --land-line:#3a5a86; --green:#4f7a5c; --green-bg:#bfe3c4; --red-bg:#e8b4b4; --red:#c56b6b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--navy-deep);
+    background-image:radial-gradient(circle at 15% 10%, rgba(201,162,39,0.08), transparent 40%),radial-gradient(circle at 85% 90%, rgba(201,162,39,0.06), transparent 40%);
+    font-family:'Inter',sans-serif;color:var(--cream);padding:0 0 60px;min-height:100vh;}
+  .topbar{background:var(--navy);border-bottom:2px dashed var(--gold);padding:28px 20px 22px;text-align:center;position:relative;}
+  .topbar::before,.topbar::after{content:"";position:absolute;bottom:-14px;width:28px;height:28px;background:var(--navy-deep);border-radius:50%;}
+  .topbar::before{left:-14px;} .topbar::after{right:-14px;}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px;}
+  h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(22px,5vw,32px);margin:0 0 6px;letter-spacing:-0.5px;}
+  .subtitle{font-size:13.5px;color:#c7cee0;max-width:520px;margin:0 auto;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 18px;}
+  .map-slide{margin:26px 0 10px;border-radius:14px;overflow:hidden;border:1.5px solid var(--gold);box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+  .map-slide .map-cap{background:var(--navy);padding:10px 16px;font-family:'Poppins',sans-serif;font-size:12.5px;font-weight:700;color:var(--gold-soft);letter-spacing:1px;text-transform:uppercase;text-align:center;}
+  .map-frame{width:100%;aspect-ratio:16/9;background:linear-gradient(180deg,#0e1c38,#132a4f);}
+  svg.usmap{display:block;width:100%;height:100%;}
+  .trail{fill:none;stroke:var(--gold);stroke-width:3;stroke-dasharray:6 7;opacity:0.55;}
+  .land{fill:var(--land);stroke:var(--land-line);stroke-width:2;}
+  .stop-circle{fill:var(--navy);stroke:var(--gold);stroke-width:2.5;}
+  .stop-circle.active{fill:var(--gold);stroke:var(--cream);}
+  .stop-circle.done{fill:var(--gold-soft);stroke:var(--gold-soft);}
+  .stop-label{font-family:'Inter',sans-serif;font-size:10px;fill:#c7cee0;}
+  .stop-label.active{fill:var(--gold-soft);font-weight:700;}
+  .traveler{filter:drop-shadow(0 3px 5px rgba(0,0,0,0.5));}
+  .pulse{fill:none;stroke:var(--gold-soft);stroke-width:2;opacity:0.8;transform-origin:center;animation:pulse 2s ease-out infinite;}
+  @keyframes pulse{0%{r:14;opacity:0.8;}100%{r:32;opacity:0;}}
+  .traveler-move{animation:moveTraveler 2.4s ease-in-out forwards;animation-delay:.4s;}
+  @keyframes moveTraveler{0%{transform:translate(0,0);}100%{transform:translate(var(--dx),var(--dy));}}
+  .map-note{font-size:12px;color:#a9b3cc;text-align:center;margin:8px 0 4px;}
+  .map-note b{color:var(--gold-soft);}
+  .section-head{margin:34px 0 14px;display:flex;align-items:baseline;gap:10px;}
+  .section-head .tag{font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;background:var(--gold);color:var(--navy-deep);padding:3px 9px;border-radius:4px;letter-spacing:1px;}
+  .section-head h2{font-family:'Poppins',sans-serif;font-size:17px;margin:0;color:var(--cream);}
+  .section-note{font-size:12.5px;color:#a9b3cc;margin:-6px 0 14px;line-height:1.5;}
+  .rescue{background:linear-gradient(135deg,var(--navy) 0%, #1c2f57 100%);border:1.5px solid var(--gold);border-radius:14px;padding:18px 18px 6px;margin-top:8px;box-shadow:0 8px 24px rgba(0,0,0,0.35);}
+  .rescue-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--gold-soft);display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .rescue-sub{font-size:12px;color:#b9c2da;margin-bottom:12px;}
+  .ticket{background:var(--cream);color:var(--ink);border-radius:12px;margin-bottom:14px;display:flex;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+  .ticket-main{flex:1;padding:14px 16px;min-width:0;}
+  .ticket-stub{width:64px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;cursor:pointer;border:none;}
+  .ticket-stub::before{content:"";position:absolute;top:0;bottom:0;left:0;border-left:2px dashed var(--navy-deep);opacity:0.5;}
+  .ticket-stub .play-ico{width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:12px solid var(--gold-soft);}
+  .ticket-stub .play-label{font-size:9px;color:var(--gold-soft);letter-spacing:0.5px;font-weight:600;}
+  .ticket-stub.playing{background:var(--gold);}
+  .ticket-stub.playing .play-ico{border-left-color:var(--navy);}
+  .ticket-stub.playing .play-label{color:var(--navy);}
+  .en{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;line-height:1.3;margin-bottom:3px;}
+  .phon{font-size:12.5px;color:#6b5b2a;font-style:italic;margin-bottom:6px;}
+  .pt{font-size:13px;color:var(--navy-soft);border-top:1px dashed #cfc4a4;padding-top:6px;margin-top:2px;}
+  .pt.hidden{opacity:0;max-height:0;overflow:hidden;border-top:none;padding-top:0;margin-top:0;}
+  .tap-hint{font-size:11px;color:#8a7d55;margin-top:4px;cursor:pointer;display:inline-block;}
+  .vocab-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
+  .vocab-card{background:var(--cream);border-radius:12px;padding:14px 12px 12px;text-align:center;position:relative;box-shadow:0 4px 14px rgba(0,0,0,0.25);cursor:pointer;}
+  .vocab-icon{font-size:34px;margin-bottom:6px;}
+  .vocab-en{font-family:'Poppins',sans-serif;font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:2px;}
+  .vocab-phon{font-size:10.5px;font-style:italic;color:#6b5b2a;margin-bottom:5px;}
+  .vocab-pt{font-size:11.5px;color:var(--navy-soft);border-top:1px dashed #cfc4a4;padding-top:5px;}
+  .vocab-play{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:3px;background:var(--navy);border-radius:11px;padding:3px 7px 3px 6px;}
+  .vocab-play .p{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--gold-soft);}
+  .vocab-play .lbl{font-size:8.5px;color:var(--gold-soft);font-weight:700;}
+  .vocab-play.playing{background:var(--gold);}
+  .vocab-play.playing .p{border-left-color:var(--navy);}
+  .vocab-play.playing .lbl{color:var(--navy);}
+  .game-box{background:var(--navy);border:1.5px solid var(--gold);border-radius:14px;padding:18px;position:relative;overflow:hidden;margin-bottom:6px;}
+  .game-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--gold-soft);margin-bottom:4px;}
+  .game-sub{font-size:12px;color:#b9c2da;margin-bottom:14px;}
+  .confetti-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .confetti-piece{position:absolute;width:6px;height:10px;top:0;opacity:0.95;animation:confettiFall 900ms ease-out forwards;}
+  @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(140px) rotate(420deg);opacity:0;}}
+  .game-win{display:none;text-align:center;font-family:'Poppins',sans-serif;font-weight:700;color:var(--gold-soft);font-size:14px;margin-top:14px;}
+  .game-win.show{display:block;}
+  /* pair game (number + letter) */
+  .pair-cols{display:flex;gap:12px;}
+  .pair-col{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .pair-item{background:var(--cream);border-radius:10px;padding:10px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink);border:3px solid transparent;display:flex;align-items:center;gap:8px;user-select:none;}
+  .pair-badge{font-family:'Poppins',sans-serif;font-weight:800;background:var(--navy);color:var(--gold-soft);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+  .pair-item.selected{border-color:var(--gold);}
+  .pair-item.correct{background:var(--green-bg);border-color:var(--green);color:#204d29;cursor:default;}
+  .pair-item.wrong{background:var(--red-bg);border-color:var(--red);}
+  /* listening quiz */
+  .lq-progress{font-size:12px;color:#b9c2da;text-align:center;margin-bottom:12px;}
+  .lq-play{display:block;margin:0 auto 16px;background:var(--gold);color:var(--navy-deep);border:none;border-radius:20px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer;}
+  .lq-options{display:flex;flex-direction:column;gap:8px;}
+  .lq-opt{background:var(--cream);color:var(--ink);border-radius:10px;padding:11px 12px;cursor:pointer;font-size:13px;border:3px solid transparent;}
+  .lq-opt.correct{background:var(--green-bg);border-color:var(--green);}
+  .lq-opt.wrong{background:var(--red-bg);border-color:var(--red);}
+  /* true/false */
+  .tf-progress{font-size:12px;color:#b9c2da;text-align:center;margin-bottom:12px;}
+  .tf-card{background:var(--cream);border-radius:12px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+  .tf-en{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;}
+  .tf-pt{font-size:14px;color:var(--navy-soft);}
+  .tf-row{display:flex;gap:10px;}
+  .tf-btn{flex:1;border:none;border-radius:14px;padding:14px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;cursor:pointer;}
+  .tf-true{background:var(--green);} .tf-false{background:var(--red);}
+  .result-box{text-align:center;padding:6px 0;}
+  .result-box .tier{font-family:'Poppins',sans-serif;font-weight:700;color:var(--gold-soft);font-size:15px;margin-bottom:8px;}
+  .result-box button{background:var(--gold);color:var(--navy-deep);border:none;border-radius:20px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;}
+  footer{text-align:center;margin-top:40px;font-size:11.5px;color:#7c86a3;padding:0 20px;}
+  footer .brand{color:var(--gold-soft);font-weight:600;}
+  /* immigration interview simulator */
+  .passport{background:linear-gradient(135deg,#1c2f57,var(--navy));border:2px solid var(--gold);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px;}
+  .passport-title{font-family:'Poppins',sans-serif;font-weight:800;color:var(--gold-soft);letter-spacing:2px;font-size:13px;margin-bottom:10px;}
+  .stamp-row{display:flex;justify-content:center;gap:8px;}
+  .stamp-slot{width:34px;height:34px;border:2px dashed var(--navy-soft);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .stamp-slot.stamped{border-style:solid;border-color:var(--gold);background:rgba(201,162,39,0.15);animation:stampPop .3s ease;}
+  @keyframes stampPop{0%{transform:scale(0) rotate(-20deg);}70%{transform:scale(1.2) rotate(8deg);}100%{transform:scale(1) rotate(-8deg);}}
+  .iv-progress{font-size:12px;color:#b9c2da;text-align:center;margin-bottom:10px;}
+  .iv-officer{background:var(--cream);color:var(--ink);border-radius:12px;padding:14px 16px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14.5px;text-align:center;margin-bottom:12px;}
+  .iv-options{display:flex;flex-direction:column;gap:8px;}
+  .iv-opt{background:var(--cream);color:var(--ink);border-radius:10px;padding:11px 12px;cursor:pointer;font-size:13px;border:3px solid transparent;}
+  .iv-opt.correct{background:var(--green-bg);border-color:var(--green);}
+  .iv-opt.wrong{background:var(--red-bg);border-color:var(--red);}
+  .iv-feedback{font-size:12px;color:#c7cee0;text-align:center;margin-top:10px;padding:8px;}
+  .iv-feedback.hidden{display:none;}
+.app{width:100%;max-width:430px;display:flex;flex-direction:column;min-height:100vh;padding:16px 16px 24px;}
+  .topbar{text-align:center;padding:6px 0 14px;}
+  .eyebrow{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;margin:0;letter-spacing:-0.3px;}
+  .prog-wrap{margin:10px 0 18px;}
+  .prog-text{display:flex;justify-content:space-between;font-size:12px;color:#c7cee0;margin-bottom:6px;}
+  .prog-text b{color:var(--gold-soft);}
+  .prog-bar{height:10px;background:var(--navy);border:1px solid var(--gold);border-radius:20px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));width:0%;transition:width .35s ease;}
+
+  .stage{flex:1;display:flex;flex-direction:column;justify-content:center;}
+  .card{background:var(--cream);color:var(--ink);border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 12px 34px rgba(0,0,0,0.4);min-height:220px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+  .card-en{font-family:'Poppins',sans-serif;font-weight:800;font-size:23px;line-height:1.3;}
+  .card-streak{display:flex;justify-content:center;gap:6px;margin-top:2px;}
+  .pip{width:9px;height:9px;border-radius:50%;background:#d8cba1;}
+  .pip.on{background:var(--green);}
+  .play-btn{margin:14px auto 0;display:flex;align-items:center;gap:6px;background:var(--navy);color:var(--gold-soft);border:none;border-radius:20px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;}
+  .play-btn.big-play{margin:6px auto 0;padding:16px 26px;font-size:15px;background:var(--gold);color:var(--navy-deep);border-radius:30px;}
+  .play-btn.playing{background:var(--gold);color:var(--navy-deep);}
+  .play-btn.big-play.playing{background:var(--navy);color:var(--gold-soft);}
+  .listen-hint{font-size:13px;color:#6b5b2a;margin-bottom:6px;}
+  .card-phon{font-size:13px;color:#6b5b2a;font-style:italic;}
+  .card-pt{font-size:17px;color:var(--navy-soft);border-top:1px dashed #cfc4a4;padding-top:12px;margin-top:6px;}
+  .hidden{display:none !important;}
+
+  .actions{margin-top:20px;}
+  .btn-reveal{width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:16px;padding:16px;font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+  .rate-row{display:flex;gap:10px;margin-top:20px;}
+  .rate-btn{flex:1;border:none;border-radius:16px;padding:16px 8px;font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:#fff;cursor:pointer;}
+  .rate-no{background:var(--red);}
+  .rate-yes{background:var(--green);}
+
+  .done-screen{text-align:center;padding:20px 4px;}
+  .done-emoji{font-size:52px;margin-bottom:6px;}
+  .done-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;color:var(--gold-soft);margin-bottom:8px;}
+  .done-sub{font-size:13.5px;color:#c7cee0;margin-bottom:20px;}
+  .done-stat{background:var(--navy);border:1.5px solid var(--gold);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .done-stat .num{font-family:'Poppins',sans-serif;font-weight:800;font-size:24px;color:var(--cream);}
+  .done-stat .lbl{font-size:11px;color:#a9b3cc;text-transform:uppercase;letter-spacing:1px;}
+  .history{margin-top:18px;border-top:1px dashed var(--navy-soft);padding-top:14px;text-align:left;}
+  .history-title{font-size:11px;color:var(--gold-soft);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .history-row{display:flex;justify-content:space-between;font-size:12.5px;color:#c7cee0;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .history-row b{color:var(--cream);}
+  .btn-restart{width:100%;margin-top:20px;background:var(--gold);color:var(--navy-deep);border:none;border-radius:16px;padding:16px;font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+  .confetti-layer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:50;}
+  .confetti-piece{position:absolute;width:7px;height:12px;top:-10px;opacity:0.95;animation:fall 1600ms ease-in forwards;}
+  @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(540deg);opacity:0;}}
+  footer{text-align:center;font-size:10.5px;color:#7c86a3;margin-top:18px;}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="eyebrow">Passaporte de Sobrevivência · Aula 3</div>
+  <h1>Restaurantes</h1>
+  <div class="subtitle">Toque nos botões "🔊 Ouvir" para escutar a pronúncia.</div>
+</div>
+<div class="wrap">
+
+  <div class="section-head"><span class="tag">01</span><h2>Números de 1 a 30</h2></div>
+  <div class="section-note">Esses você precisa decorar um por um — são a base de tudo.</div>
+  <div class="vocab-grid" id="vocabCards1"></div>
+
+  <div class="section-head"><span class="tag">02</span><h2>Dezenas de 40 a 100</h2></div>
+  <div class="section-note">Depois do 30, os números "redondos" seguem esse padrão até 100.</div>
+  <div class="vocab-grid" id="vocabCards2"></div>
+
+  <div class="rescue" style="margin-top:20px;">
+    <div class="rescue-title">💡 A partir do 31, é só juntar</div>
+    <div class="rescue-sub">Depois de 30, você não precisa decorar número por número — é só pegar a dezena (thirty, forty, fifty...) e colar o número seguinte, com hífen no meio:</div>
+    <div id="exampleCards"></div>
+    <div class="rescue-sub" style="margin-top:4px;">E o mesmo vale depois de 100: <b>one hundred</b> + o número seguinte, sem hífen dessa vez.</div>
+  </div>
+
+  <div class="section-head"><span class="tag">03</span><h2>Pratique a pronúncia (estilo revisão)</h2></div>
+  <div class="section-note">Ouça, tente lembrar, revele e diga se acertou. Precisa acertar 2 vezes seguidas pra cada número "sair" da lista. Progresso salvo automaticamente.</div>
+  <div class="game-box" style="position:relative;">
+    <div class="confetti-layer" id="confettiLayer"></div>
+<div class="prog-wrap">
+    <div class="prog-text"><span>Dominadas</span><b id="progText">0 / 0</b></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="card" id="card">
+      <div class="listen-hint" id="listenHint">🎧 Toque para ouvir o número</div>
+      <div class="card-en hidden" id="cardEn"></div>
+      <div class="card-streak" id="cardStreak"></div>
+      <button class="play-btn big-play" id="playBtn">🔊 OUVIR O NÚMERO</button>
+      <div class="card-phon hidden" id="cardPhon"></div>
+      <div class="card-pt hidden" id="cardPt"></div>
+    </div>
+    <div class="actions">
+      <button class="btn-reveal" id="revealBtn">👁️ Revelar número e tradução</button>
+      <div class="rate-row hidden" id="rateRow">
+        <button class="rate-btn rate-no" id="rateNoBtn">❌ Não sabia</button>
+        <button class="rate-btn rate-yes" id="rateYesBtn">✅ Sabia</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="done-screen hidden" id="doneScreen">
+    <div class="done-emoji" id="doneEmoji">🏆</div>
+    <div class="done-title">Treino de escuta concluído!</div>
+    <div class="done-sub">Você entendeu todas as frases só de ouvido.</div>
+    <div class="done-stat"><div class="num" id="doneAttempts">0</div><div class="lbl">tentativas usadas</div></div>
+    <div class="history" id="historyBox"></div>
+    <button class="btn-restart" id="restartBtn">🔄 Treinar de novo</button>
+  </div>
+
+  
+  </div>
+
+  <footer>Material do curso <span class="brand">Inglês de Viagem</span> — funciona offline depois de salvo.</footer>
+</div>
+
+<script>
+let cachedVoices = [];
+function refreshVoices(){ cachedVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }
+if('speechSynthesis' in window){ refreshVoices(); window.speechSynthesis.onvoiceschanged = refreshVoices; }
+function speak(text, btn){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.92;
+  const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v=>v.lang==='en-US') || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('en'));
+  if(enVoice) u.voice = enVoice;
+  if(btn) btn.classList.add('playing');
+  u.onend = ()=>{ if(btn) btn.classList.remove('playing'); };
+  u.onerror = ()=>{ if(btn) btn.classList.remove('playing'); };
+  window.speechSynthesis.speak(u);
+}
+
+const numbers1to30 = [
+  {en:"One", phon:"uán", pt:"Um"}, {en:"Two", phon:"tú", pt:"Dois"}, {en:"Three", phon:"thrí", pt:"Três"},
+  {en:"Four", phon:"fôr", pt:"Quatro"}, {en:"Five", phon:"fáiv", pt:"Cinco"}, {en:"Six", phon:"síks", pt:"Seis"},
+  {en:"Seven", phon:"séven", pt:"Sete"}, {en:"Eight", phon:"éit", pt:"Oito"}, {en:"Nine", phon:"náin", pt:"Nove"},
+  {en:"Ten", phon:"ten", pt:"Dez"}, {en:"Eleven", phon:"iléven", pt:"Onze"}, {en:"Twelve", phon:"tuélv", pt:"Doze"},
+  {en:"Thirteen", phon:"thértín", pt:"Treze"}, {en:"Fourteen", phon:"fôrtín", pt:"Catorze"}, {en:"Fifteen", phon:"fíftín", pt:"Quinze"},
+  {en:"Sixteen", phon:"síkstín", pt:"Dezesseis"}, {en:"Seventeen", phon:"séventín", pt:"Dezessete"}, {en:"Eighteen", phon:"éitín", pt:"Dezoito"},
+  {en:"Nineteen", phon:"náintín", pt:"Dezenove"}, {en:"Twenty", phon:"tuénti", pt:"Vinte"},
+  {en:"Twenty-one", phon:"tuénti uán", pt:"Vinte e um"}, {en:"Twenty-two", phon:"tuénti tú", pt:"Vinte e dois"},
+  {en:"Twenty-three", phon:"tuénti thrí", pt:"Vinte e três"}, {en:"Twenty-four", phon:"tuénti fôr", pt:"Vinte e quatro"},
+  {en:"Twenty-five", phon:"tuénti fáiv", pt:"Vinte e cinco"}, {en:"Twenty-six", phon:"tuénti síks", pt:"Vinte e seis"},
+  {en:"Twenty-seven", phon:"tuénti séven", pt:"Vinte e sete"}, {en:"Twenty-eight", phon:"tuénti éit", pt:"Vinte e oito"},
+  {en:"Twenty-nine", phon:"tuénti náin", pt:"Vinte e nove"}, {en:"Thirty", phon:"thérti", pt:"Trinta"}
+];
+const tens40to100 = [
+  {en:"Forty", phon:"fórti", pt:"Quarenta"}, {en:"Fifty", phon:"fífti", pt:"Cinquenta"},
+  {en:"Sixty", phon:"síksti", pt:"Sessenta"}, {en:"Seventy", phon:"sévanti", pt:"Setenta"},
+  {en:"Eighty", phon:"éiti", pt:"Oitenta"}, {en:"Ninety", phon:"náinti", pt:"Noventa"},
+  {en:"One hundred", phon:"uán rándred", pt:"Cem"}
+];
+const exampleNumbers = [
+  {en:"Thirty-one", phon:"thérti uán", pt:"31 = trinta e um"},
+  {en:"Thirty-two", phon:"thérti tú", pt:"32 = trinta e dois"},
+  {en:"One hundred one", phon:"uán rándred uán", pt:"101 = cento e um"},
+  {en:"One hundred two", phon:"uán rándred tú", pt:"102 = cento e dois"}
+];
+
+function buildVocabCard(item, big){
+  const card=document.createElement('div'); card.className='vocab-card';
+  card.innerHTML=`<div class="vocab-play"><div class="p"></div><span class="lbl">OUVIR</span></div>
+    <div class="vocab-icon" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:${big?'26px':'22px'};color:var(--navy);">${big}</div>
+    <div class="vocab-en">${item.en}</div><div class="vocab-phon">"${item.phon}"</div><div class="vocab-pt">${item.pt}</div>`;
+  const btn=card.querySelector('.vocab-play'); card.onclick=()=>speak(item.en, btn); return card;
+}
+function buildTicket(item){
+  const ticket = document.createElement('div'); ticket.className='ticket';
+  const main=document.createElement('div'); main.className='ticket-main';
+  const en=document.createElement('div'); en.className='en'; en.textContent=item.en;
+  const phon=document.createElement('div'); phon.className='phon'; phon.textContent='"'+item.phon+'"';
+  const pt=document.createElement('div'); pt.className='pt'; pt.textContent=item.pt;
+  main.append(en,phon,pt);
+  const stub=document.createElement('button'); stub.className='ticket-stub';
+  const ico=document.createElement('div'); ico.className='play-ico';
+  const lbl=document.createElement('div'); lbl.className='play-label'; lbl.textContent='OUVIR';
+  stub.append(ico,lbl); stub.onclick=()=>speak(item.en, stub);
+  ticket.append(main,stub); return ticket;
+}
+
+document.getElementById('vocabCards1').append(...numbers1to30.map((n,i)=>buildVocabCard(n, i+1)));
+document.getElementById('vocabCards2').append(...tens40to100.map((n,i)=>buildVocabCard(n, [40,50,60,70,80,90,100][i])));
+document.getElementById('exampleCards').append(...exampleNumbers.map(buildTicket));
+
+/* ---------- REVIEW (Anki-style) ---------- */
+const deckSource = [...numbers1to30, ...tens40to100, ...exampleNumbers];
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+let deck = [];       // active (not yet mastered) cards: {en,phon,pt,streak,id}
+let total = 0;
+let mastered = 0;
+let attempts = 0;
+let currentCard = null;
+let lastCardId = null;
+
+const PKEY = 'inglesViagem_numeros_pronunciaProgress';
+function saveProgress(){
+  try{ localStorage.setItem(PKEY, JSON.stringify({deck, total, mastered, attempts, lastCardId})); }catch(e){}
+}
+function loadProgress(){
+  try{ const raw = localStorage.getItem(PKEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function clearProgress(){
+  try{ localStorage.removeItem(PKEY); }catch(e){}
+}
+
+function startFresh(){
+  clearProgress();
+  deck = shuffle(deckSource).map((c,i)=>({...c, streak:0, id:i}));
+  total = deck.length; mastered = 0; attempts = 0; lastCardId = null;
+  document.getElementById('doneScreen').classList.add('hidden');
+  document.getElementById('stage').classList.remove('hidden');
+  updateProgress();
+  nextCard();
+}
+
+function initDeck(){
+  const saved = loadProgress();
+  if(saved && saved.deck && saved.deck.length > 0){
+    deck = saved.deck; total = saved.total; mastered = saved.mastered;
+    attempts = saved.attempts; lastCardId = saved.lastCardId;
+    document.getElementById('doneScreen').classList.add('hidden');
+    document.getElementById('stage').classList.remove('hidden');
+    updateProgress();
+    nextCard();
+  } else {
+    startFresh();
+  }
+}
+
+function updateProgress(){
+  document.getElementById('progText').textContent = mastered + ' / ' + total;
+  document.getElementById('progFill').style.width = (total? (mastered/total*100) : 0) + '%';
+}
+
+function pickNext(){
+  const candidates = deck.filter(c=>c.id!==lastCardId);
+  const pool = candidates.length ? candidates : deck;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function nextCard(){
+  if(deck.length===0){ finishSession(); return; }
+  currentCard = pickNext();
+  lastCardId = currentCard.id;
+  document.getElementById('cardEn').textContent = currentCard.en;
+  document.getElementById('cardPhon').textContent = '"'+currentCard.phon+'"';
+  document.getElementById('cardPt').textContent = currentCard.pt;
+  document.getElementById('cardEn').classList.add('hidden');
+  document.getElementById('cardPhon').classList.add('hidden');
+  document.getElementById('cardPt').classList.add('hidden');
+  document.getElementById('listenHint').classList.remove('hidden');
+  document.getElementById('revealBtn').classList.remove('hidden');
+  document.getElementById('rateRow').classList.add('hidden');
+  renderStreak();
+}
+
+function renderStreak(){
+  const box = document.getElementById('cardStreak'); box.innerHTML = '';
+  for(let i=0;i<2;i++){
+    const p = document.createElement('div');
+    p.className = 'pip' + (i < currentCard.streak ? ' on' : '');
+    box.appendChild(p);
+  }
+}
+
+function rate(knewIt){
+  attempts++;
+  const idx = deck.findIndex(c=>c.id===currentCard.id);
+  if(knewIt){
+    deck[idx].streak++;
+    if(deck[idx].streak >= 2){
+      deck.splice(idx,1);
+      mastered++;
+      playTone([523.25,659.25,783.99],'sine',0.1);
+    } else {
+      playTone([440,554],'sine',0.09);
+    }
+  } else {
+    deck[idx].streak = 0;
+    playTone([220,170],'square',0.13);
+  }
+  updateProgress();
+  saveProgress();
+  nextCard();
+}
+
+/* ---------- SOUND ---------- */
+let audioCtx = null;
+function getAudioCtx(){ if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } return audioCtx; }
+function playTone(freqs, type, dur){
+  try{
+    const ctx = getAudioCtx();
+    freqs.forEach((f,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type=type; o.frequency.value=f; o.connect(g); g.connect(ctx.destination);
+      const t0 = ctx.currentTime + i*dur;
+      g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.22,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+      o.start(t0); o.stop(t0+dur+0.02);
+    });
+  }catch(e){}
+}
+
+/* ---------- HISTORY (persists in this browser after the file is saved/opened locally) ---------- */
+const HKEY = 'inglesViagem_numeros_pronunciaHistory';
+let memHistory = [];
+function loadHist(){ try{ return JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch(e){ return memHistory; } }
+function saveHist(arr){ try{ localStorage.setItem(HKEY, JSON.stringify(arr)); }catch(e){ memHistory = arr; } }
+
+function finishSession(){
+  document.getElementById('stage').classList.add('hidden');
+  const hist = loadHist();
+  const session = { n: hist.length+1, attempts: attempts, cards: total, date: new Date().toLocaleDateString('pt-BR') };
+  hist.push(session); saveHist(hist);
+
+  const best = Math.min(...hist.map(h=>h.attempts));
+  document.getElementById('doneAttempts').textContent = attempts;
+  document.getElementById('doneEmoji').textContent = attempts <= best ? '🏆' : '🎉';
+  document.getElementById('doneSub') && null;
+
+  const rows = hist.slice(-6).reverse().map(h=>`<div class="history-row"><span>Sessão ${h.n} — ${h.date}</span><b>${h.attempts} tentativas</b></div>`).join('');
+  document.getElementById('historyBox').innerHTML = hist.length>1
+    ? `<div class="history-title">📈 Seu histórico (menos tentativas = melhor memória)</div>${rows}`
+    : '';
+
+  document.getElementById('doneScreen').classList.remove('hidden');
+  burstConfetti();
+}
+
+function burstConfetti(){
+  const layer = document.getElementById('confettiLayer');
+  const colors = ['#c9a227','#e6c35c','#f6f1e4','#4f7a5c'];
+  for(let i=0;i<40;i++){
+    const p = document.createElement('div'); p.className='confetti-piece';
+    p.style.left = (Math.random()*100)+'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = (Math.random()*0.6)+'s';
+    layer.appendChild(p);
+    setTimeout(()=>p.remove(), 2400);
+  }
+}
+
+document.getElementById('restartBtn').onclick = startFresh;
+initDeck();
+
+setTimeout(function(){
+  const en = document.getElementById('cardEn');
+  if(!en || !en.textContent.trim()){
+    const b = document.getElementById('errBanner');
+    b.style.display = 'block';
+    b.textContent = '⚠️ O conteúdo não carregou. Tente abrir este link em outro navegador (Chrome ou Safari).';
+  }
+}, 1200);
+
+</script>
+</body>
+</html>
